@@ -1,0 +1,27 @@
+{
+  "description": "Description",
+  "salary": "Salary",
+  "home": {
+    "hero_title": "The #1 job board for freelance jobs",
+    "hero_description": "Looking for a job? browse latest freelance job openings to view & apply!",
+    "search_job": "Search job",
+    "city": "City",
+    "search": "Search"
+  },
+  "auth": {
+    "signup_title": "Registration",
+    "signup_description": "Sign up to find your first job or connect with potential employers.",
+    "email": "Email",
+    "password": "Password",
+    "register": "Register",
+    "login": "Login",
+    "signin_title": "Login",
+    "name": "Name"
+  },
+  "jobs": {
+    "my_vacancies": "My vacancies",
+    "title": "Posted Job Openings",
+    "name": "Name",
+    "add_job": "Add job"
+  }
+}

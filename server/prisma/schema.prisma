@@ -1,0 +1,114 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+/// Units for pricing
+enum Unit {
+  HOUR
+  DAY
+  PROJECT
+}
+
+/// Levels of experience required
+enum ExperienceLevel {
+  JUNIOR
+  MID
+  SENIOR
+}
+
+/// Types of job engagements
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String // Remember to hash this in application logic
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postedJobs Job[]      @relation("PostedJobs")
+  filledJobs Job[]      @relation("FilledJobs")
+  proposals  Proposal[]
+}
+
+model Location {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  jobs Job[]
+}
+
+model Job {
+  id              Int             @id @default(autoincrement())
+  name            String
+  description     String          @db.Text // Consider @db.Text for longer descriptions
+  salary          Decimal         @db.Decimal(10, 2)
+  unit            Unit
+  experienceLevel ExperienceLevel // Renamed for consistency
+  jobType         JobType // Renamed for consistency
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt // Added
+
+  postedById Int
+  postedBy   User @relation("PostedJobs", fields: [postedById], references: [id], onDelete: Restrict) // Added onDelete
+
+  filledById Int?
+  filledBy   User? @relation("FilledJobs", fields: [filledById], references: [id], onDelete: SetNull) // Added onDelete, assuming job becomes unfilled
+
+  tags     Tag[]      @relation("JobTags")
+  proposal Proposal[]
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull) // Added onDelete, job becomes location-less if location deleted
+
+  @@index([locationId])
+  @@index([postedById]) // Consider indexing this if you query for jobs by poster often
+  @@index([filledById]) // Consider indexing this if you query for jobs by filler often
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  jobs Job[]  @relation("JobTags")
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Proposal {
+  id          Int            @id @default(autoincrement())
+  coverLetter String         @db.Text // Consider @db.Text for longer cover letters
+  salary      Decimal?       @db.Decimal(10, 2) // Optional salary override
+  status      ProposalStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // Added
+
+  job         Job  @relation(fields: [jobId], references: [id], onDelete: Cascade) // Added onDelete
+  jobId       Int
+  applicant   User @relation(fields: [applicantId], references: [id], onDelete: Cascade) // Added onDelete
+  applicantId Int
+
+  @@index([jobId])
+  @@index([applicantId])
+}
