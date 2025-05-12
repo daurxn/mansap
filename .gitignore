@@ -115,3 +115,7 @@ lerna-debug.log* # If Lerna is used at the root
 /frontend/.idea/
 # '.fleet' from client's .gitignore becomes /frontend/.fleet/
 /frontend/.fleet/
+
+/server/node_modules
+/server/dist
+/client/node_modules
