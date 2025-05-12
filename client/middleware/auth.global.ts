@@ -1,8 +1,9 @@
+import { useToken } from "~/composables/auth/useToken";
 
-const REQUIRED_AUTH_PATHS = ["/job-postings"];
+const REQUIRED_AUTH_PATHS = ["/job-postings", "/profile"];
 
 export default defineNuxtRouteMiddleware((to) => {
-  const token = useCookie("token");
+  const token = useToken();
 
   if (token.value && to?.path === "/auth") {
     return navigateTo("/");

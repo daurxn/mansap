@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxt/icon",
     "@nuxt/image",
-    "@nuxt/test-utils",
+    "@nuxt/test-utils/module",
     "shadcn-nuxt",
     "@nuxtjs/i18n",
     "@pinia/nuxt",
@@ -45,5 +45,6 @@ export default defineNuxtConfig({
       { code: "ru", name: "Русский", language: "ru-RU", file: "ru.json" },
     ],
     defaultLocale: "en",
+    strategy: "no_prefix",
   },
 });

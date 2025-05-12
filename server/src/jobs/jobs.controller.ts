@@ -18,6 +18,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { JobsService } from './jobs.service';
 import { AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
+import { CreateApplicationDto } from './dto/create-application.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -57,5 +58,17 @@ export class JobsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.jobsService.remove(+id);
+  }
+
+  @Post('application')
+  @UseGuards(AuthGuard)
+  createApplication(
+    @Request() req: AuthenticatedRequest,
+    @Body() createApplicationDto: CreateApplicationDto,
+  ) {
+    return this.jobsService.createApplication(
+      req.user.id,
+      createApplicationDto,
+    );
   }
 }

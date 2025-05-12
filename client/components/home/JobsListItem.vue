@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Image, MapPin } from "lucide-vue-next";
 import type { Job } from "~/types/job";
 import Card from "../ui/card/Card.vue";
+import CardContent from "../ui/card/CardContent.vue";
 import CardHeader from "../ui/card/CardHeader.vue";
 import CardTitle from "../ui/card/CardTitle.vue";
-import { CircleDollarSign, Image, MapPin } from "lucide-vue-next";
-import CardContent from "../ui/card/CardContent.vue";
 
 const { job } = defineProps<{
   job: Job;
@@ -37,7 +37,8 @@ const { job } = defineProps<{
         <p class="text-gray-800 dark:text-gray-200 mb-3">
           {{ job.description }}
         </p>
-        <ul class="flex gap-2 font-medium mb-7">
+        <Separator class="my-4" />
+        <ul class="flex gap-2 font-medium">
           <li
             v-for="tag in job.tags"
             :key="tag.id"
@@ -46,22 +47,11 @@ const { job } = defineProps<{
             {{ tag.name }}
           </li>
         </ul>
-
-        <div class="flex justify-between">
-          <div class="flex gap-2 items-center">
-            <div class="flex items-center gap-1">
-              <CircleDollarSign color="#5D3FD3" :size="20" />
-              ${{ job.salary }}/{{ job.job_type }}
-            </div>
-
-            <span>&#x2022;</span>
-
-            <span>X proposals</span>
-          </div>
-
-          <Button>Apply now</Button>
-        </div>
       </CardContent>
+
+      <CardFooter class="text-sm">
+        <slot name="footer" />
+      </CardFooter>
     </Card>
   </li>
 </template>

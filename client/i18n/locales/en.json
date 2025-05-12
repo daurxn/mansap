@@ -1,6 +1,16 @@
 {
   "description": "Description",
   "salary": "Salary",
+  "add": "Add",
+  "save_changes": "Save changes",
+  "logout": "Logout",
+  "select": "Select {0}",
+  "region": "region",
+  "gender": "gender",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create {0}",
+  "applications": "{num} applications",
   "home": {
     "hero_title": "The #1 job board for freelance jobs",
     "hero_description": "Looking for a job? browse latest freelance job openings to view & apply!",
@@ -22,6 +32,25 @@
     "my_vacancies": "My vacancies",
     "title": "Posted Job Openings",
     "name": "Name",
-    "add_job": "Add job"
+    "add_job": "Add job",
+    "job_type": "Job type",
+    "exp_level": "Experience Level",
+    "tags": "Tags",
+    "posting_job": "Posting job",
+    "apply": "Apply now",
+    "education": "Education",
+    "resume": "resume",
+    "cover_letter": "Cover letter"
+  },
+  "profile": {
+    "age": "Age",
+    "gender": "Gender",
+    "locationId": "Location",
+    "resume": "CV",
+    "bio": "About me",
+    "edit": "Edit profile",
+    "heading": "Profile",
+    "editing": "Profile editing",
+    "make_changes": "Make changes to your profile here. Click save when you're done."
   }
 }

@@ -1,7 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateApplicationDto } from './dto/create-application.dto';
 
 @Injectable()
 export class JobsService {
@@ -58,6 +64,11 @@ export class JobsService {
       include: {
         postedBy: { select: { email: true, name: true } },
         tags: { select: { name: true } },
+        _count: {
+          select: {
+            applications: true,
+          },
+        },
       },
     });
   }
@@ -73,14 +84,101 @@ export class JobsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} job`;
+    return this.prisma.job.findFirst({
+      where: { id },
+      include: {
+        postedBy: { select: { email: true, name: true } },
+        tags: { select: { name: true } },
+      },
+    });
   }
 
   update(id: number, updateJobDto: UpdateJobDto) {
-    return `This action updates a #${id} job`;
+    const updatedJob = {
+      ...updateJobDto,
+      tags: {
+        connectOrCreate: updateJobDto.tags?.map((tagName) => ({
+          where: { name: tagName },
+          create: { name: tagName },
+        })),
+      },
+    };
+
+    return this.prisma.job.update({ where: { id }, data: updatedJob });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} job`;
+    return this.prisma.job.delete({ where: { id } });
+  }
+
+  async createApplication(
+    applicantId: number,
+    createApplicationDto: CreateApplicationDto,
+  ) {
+    const { jobId, coverLetter } = createApplicationDto;
+
+    const applicant = await this.prisma.user.findUnique({
+      where: { id: applicantId },
+    });
+
+    if (!applicant) {
+      throw new NotFoundException(
+        `Applicant with ID ${applicantId} not found.`,
+      );
+    }
+
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
+    });
+
+    if (!job) {
+      throw new NotFoundException(`Job with ID ${jobId} not found.`);
+    }
+
+    const existingApplication = await this.prisma.application.findFirst({
+      where: {
+        applicantId: applicantId,
+        jobId,
+      },
+    });
+
+    if (existingApplication) {
+      throw new ConflictException(
+        `You have already applied for job ID ${jobId}.`,
+      );
+    }
+
+    const resume = await this.prisma.resume.findUnique({
+      where: { userId: applicantId },
+    });
+
+    if (resume) {
+      try {
+        const newApplication = await this.prisma.application.create({
+          data: {
+            jobId,
+            applicantId,
+            resumeId: resume.id,
+            coverLetter,
+          },
+          include: {
+            job: true,
+            applicant: {
+              select: { id: true, name: true, email: true },
+            },
+            resume: true,
+          },
+        });
+        return newApplication;
+      } catch (error) {
+        // Log the error for debugging
+        console.error('Error creating application:', error);
+        // Handle potential Prisma errors, e.g., foreign key constraint violations
+        // if connect fails for some unexpected reason (though checks above should prevent this)
+        throw new ConflictException(
+          'Could not create application. Please ensure all provided IDs are valid and try again.',
+        );
+      }
+    }
   }
 }

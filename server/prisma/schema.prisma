@@ -45,42 +45,62 @@ model User {
 
   postedJobs Job[]      @relation("PostedJobs")
   filledJobs Job[]      @relation("FilledJobs")
-  proposals  Proposal[]
+  proposals  Proposal[] // Existing proposals model
+  profile    Profile?
+  resume     Resume? // Relation to the Resume model
+
+  applications Application[] @relation("UserApplications") // User's job applications
+}
+
+model Profile {
+  id         Int       @id @default(autoincrement())
+  userId     Int       @unique // Foreign key to User
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade) // If User is deleted, Profile is also deleted
+  age        Int?
+  gender     String?
+  locationId Int? // Foreign key to Location (optional, if location is not mandatory)
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull) // If Location deleted, set null
+  bio        String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Location {
   id   Int    @id @default(autoincrement())
   name String @unique
 
-  jobs Job[]
+  jobs    Job[]
+  Profile Profile[]
 }
 
 model Job {
   id              Int             @id @default(autoincrement())
   name            String
-  description     String          @db.Text // Consider @db.Text for longer descriptions
+  description     String          @db.Text
   salary          Decimal         @db.Decimal(10, 2)
   unit            Unit
-  experienceLevel ExperienceLevel // Renamed for consistency
-  jobType         JobType // Renamed for consistency
+  experienceLevel ExperienceLevel
+  jobType         JobType
   createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt // Added
+  updatedAt       DateTime        @updatedAt
 
   postedById Int
-  postedBy   User @relation("PostedJobs", fields: [postedById], references: [id], onDelete: Restrict) // Added onDelete
+  postedBy   User @relation("PostedJobs", fields: [postedById], references: [id], onDelete: Restrict)
 
   filledById Int?
-  filledBy   User? @relation("FilledJobs", fields: [filledById], references: [id], onDelete: SetNull) // Added onDelete, assuming job becomes unfilled
+  filledBy   User? @relation("FilledJobs", fields: [filledById], references: [id], onDelete: SetNull)
 
   tags     Tag[]      @relation("JobTags")
-  proposal Proposal[]
+  proposal Proposal[] // Existing proposals model
 
   locationId Int?
-  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull) // Added onDelete, job becomes location-less if location deleted
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+
+  applications Application[] @relation("JobApplications") // Applications received for this job
 
   @@index([locationId])
-  @@index([postedById]) // Consider indexing this if you query for jobs by poster often
-  @@index([filledById]) // Consider indexing this if you query for jobs by filler often
+  @@index([postedById])
+  @@index([filledById])
 }
 
 model Tag {
@@ -97,18 +117,65 @@ enum ProposalStatus {
 
 model Proposal {
   id          Int            @id @default(autoincrement())
-  coverLetter String         @db.Text // Consider @db.Text for longer cover letters
-  salary      Decimal?       @db.Decimal(10, 2) // Optional salary override
+  coverLetter String         @db.Text
+  salary      Decimal?       @db.Decimal(10, 2)
   status      ProposalStatus @default(PENDING)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt // Added
+  updatedAt DateTime @updatedAt
 
-  job         Job  @relation(fields: [jobId], references: [id], onDelete: Cascade) // Added onDelete
+  job         Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId       Int
-  applicant   User @relation(fields: [applicantId], references: [id], onDelete: Cascade) // Added onDelete
+  applicant   User @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   applicantId Int
 
   @@index([jobId])
   @@index([applicantId])
+}
+
+// Added Resume model
+model Resume {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique // Foreign key to User, ensures one-to-one
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade) // If User is deleted, Resume is also deleted
+  workExperience String   @db.Text
+  education      String   @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  applications Application[] @relation("ResumeApplications") // Applications submitted with this resume
+}
+
+// Added ApplicationStatus enum
+enum ApplicationStatus {
+  SUBMITTED
+  REVIEWED
+  INTERVIEWING
+  OFFERED
+  REJECTED
+  WITHDRAWN // Applicant withdrew their application
+}
+
+// Added Application model
+model Application {
+  id Int @id @default(autoincrement())
+
+  jobId Int
+  job   Job @relation("JobApplications", fields: [jobId], references: [id], onDelete: Cascade)
+
+  applicantId Int
+  applicant   User @relation("UserApplications", fields: [applicantId], references: [id], onDelete: Cascade)
+
+  resumeId Int?
+  resume   Resume? @relation("ResumeApplications", fields: [resumeId], references: [id], onDelete: SetNull)
+
+  coverLetter String?           @db.Text
+  status      ApplicationStatus @default(SUBMITTED)
+
+  appliedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([jobId])
+  @@index([applicantId])
+  @@index([resumeId])
 }

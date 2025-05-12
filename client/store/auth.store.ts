@@ -11,6 +11,8 @@ interface UserPayloadInterface {
 
 export const useAuthStore = defineStore("auth", () => {
   const token = useCookie("token");
+  const router = useRouter();
+
   const isAuthenticated = ref(false);
   const loading = ref(false);
 
@@ -92,6 +94,8 @@ export const useAuthStore = defineStore("auth", () => {
     role.value = null;
     email.value = null;
     name.value = null;
+
+    router.push("/");
   }
 
   return {

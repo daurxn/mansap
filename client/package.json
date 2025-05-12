@@ -34,10 +34,14 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest"
   },
   "type": "module",
   "devDependencies": {
-    "@nuxtjs/color-mode": "^3.5.2"
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^17.4.6",
+    "vitest": "^3.1.3"
   }
 }

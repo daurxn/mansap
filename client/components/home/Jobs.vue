@@ -11,6 +11,8 @@ const { data, refresh } = useFetch<Job[]>("/api/jobs", { query: { search } });
 
 const jobPostings = computed(() => data.value ?? []);
 
+console.log(data.value);
+
 watch(search, () => {
   refresh();
 });

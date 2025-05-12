@@ -21,9 +21,19 @@ export class AuthService {
       throw new HttpException('User already registered', HttpStatus.FOUND);
     }
 
-    data.password = await hash(data.password, 12);
+    const hashedPassword = await hash(data.password, 12);
+
+    const userData = {
+      name: data.name,
+      email: data.email,
+      password: hashedPassword,
+      profile: {
+        create: {},
+      },
+    };
+
     const createUser = await this.prisma.user.create({
-      data,
+      data: userData,
     });
 
     if (createUser) {
@@ -55,11 +65,12 @@ export class AuthService {
         sub: checkUserExists.id,
         name: checkUserExists.name,
         email: checkUserExists.email,
+        role: checkUserExists.role, // It's good practice to include role in JWT if needed for client-side logic or easy access
       });
 
       return {
         statusCode: 200,
-        message: 'Login berhasil',
+        message: 'Login berhasil', // "Login successful" in Indonesian
         accessToken,
       };
     } else {
@@ -71,22 +82,41 @@ export class AuthService {
   }
 
   async profile(user_id: number) {
+    // This query can be expanded to include profile data if needed
+    // For example, by adding:
+    // include: {
+    //   profile: {
+    //     include: {
+    //       location: true, // To also fetch related location details
+    //     },
+    //   },
+    // },
+    // Or using select for specific profile fields.
     return await this.prisma.user.findFirst({
       where: {
         id: user_id,
       },
       select: {
+        id: true, // Good to include ID
         name: true,
         email: true,
         role: true,
+        // If you want to return the associated profile data:
+        // profile: {
+        //   select: {
+        //     age: true,
+        //     gender: true,
+        //     bio: true,
+        //     resume: true,
+        //     location: { // Example of fetching nested relation
+        //       select: {
+        //         name: true
+        //       }
+        //     }
+        //     // add other profile fields you want to return
+        //   }
+        // }
       },
     });
   }
-
-  // generateJWT(payload: any) {
-  //   return this.jwtService.sign(payload, {
-  //     secret: jwt_config.secret,
-  //     expiresIn: jwt_config.expired,
-  //   });
-  // }
 }

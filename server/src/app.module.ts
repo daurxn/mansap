@@ -9,6 +9,7 @@ import { TagsModule } from './tags/tags.module';
 import { LocationsModule } from './locations/locations.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import * as path from 'path';
     JobsModule,
     TagsModule,
     LocationsModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
