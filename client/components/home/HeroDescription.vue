@@ -1,3 +1,3 @@
 <template>
-    <p class="text-center text-gray-300 dark:text-gray-400">{{ $t('home.hero_description') }}</p>
+    <p class="text-gray-400 dark:text-gray-400 text-2xl mb-8">{{ $t('home.hero_description') }}</p>
 </template>

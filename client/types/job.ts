@@ -13,8 +13,6 @@ export type Job = {
   filledById: number;
   postedById: number;
   postedBy: { name: string; email: string };
-  mediaType: "none" | "video" | "image";
-  mediaLink: string;
   _count: {
     applications: number;
   };

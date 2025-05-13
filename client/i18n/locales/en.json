@@ -11,6 +11,7 @@
   "edit": "Edit",
   "create": "Create {0}",
   "applications": "{num} applications",
+  "login_sign-up": "Login / Sign up",
   "home": {
     "hero_title": "The #1 job board for freelance jobs",
     "hero_description": "Looking for a job? browse latest freelance job openings to view & apply!",
@@ -40,9 +41,7 @@
     "apply": "Apply now",
     "education": "Education",
     "resume": "resume",
-    "cover_letter": "Cover letter",
-    "media_type": "Media type",
-    "media_link": "Link"
+    "cover_letter": "Cover letter"
   },
   "profile": {
     "age": "Age",

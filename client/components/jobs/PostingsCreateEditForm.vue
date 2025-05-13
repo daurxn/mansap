@@ -32,7 +32,6 @@ const emit = defineEmits<{
 const ExperienceLevelEnumValues = ["JUNIOR", "MID", "SENIOR"] as const;
 const UnitEnumValues = ["HOUR", "DAY", "PROJECT"] as const;
 const JobTypeEnumValues = ["FULL_TIME", "PART_TIME", "CONTRACT"] as const;
-const MediaTypeEnumValues = ["none", "image", "video"] as const;
 
 const formSchema = toTypedSchema(
   z.object({
@@ -80,10 +79,6 @@ const formSchema = toTypedSchema(
         message: "If tags are provided, there must be at least one tag.",
       })
       .optional(),
-    mediaType: z.enum(MediaTypeEnumValues, {
-      required_error: "Media type is required.",
-    }),
-    mediaLink: z.string().min(2).max(1000),
   })
 );
 
@@ -102,8 +97,6 @@ if (job) {
   form.setFieldValue("experienceLevel", job.experienceLevel);
   form.setFieldValue("jobType", job.jobType);
   form.setFieldValue("locationId", job.locationId);
-  form.setFieldValue("mediaType", job.mediaType);
-  form.setFieldValue("mediaLink", job.mediaLink);
 
   form.setFieldValue(
     "tags",
@@ -283,50 +276,6 @@ const onSubmit = form.handleSubmit(async (values) => {
                   <FormLabel>Contract</FormLabel>
                 </FormItem>
               </RadioGroup>
-            </FormControl>
-          </FormItem>
-        </FormField>
-
-        <FormField v-slot="{ componentField }" name="mediaType" type="radio">
-          <FormItem class="mb-4">
-            <FormLabel>{{ $t("jobs.media_type") }}</FormLabel>
-
-            <FormControl>
-              <RadioGroup v-bind="componentField" class="flex">
-                <FormItem class="flex items-center">
-                  <FormControl>
-                    <RadioGroupItem value="none" />
-                  </FormControl>
-
-                  <FormLabel>No media</FormLabel>
-                </FormItem>
-
-                <FormItem class="flex items-center">
-                  <FormControl>
-                    <RadioGroupItem value="image" />
-                  </FormControl>
-
-                  <FormLabel>Image</FormLabel>
-                </FormItem>
-
-                <FormItem class="flex items-center">
-                  <FormControl>
-                    <RadioGroupItem value="video" />
-                  </FormControl>
-
-                  <FormLabel>Video</FormLabel>
-                </FormItem>
-              </RadioGroup>
-            </FormControl>
-          </FormItem>
-        </FormField>
-
-        <FormField v-slot="{ componentField }" name="mediaLink">
-          <FormItem class="mb-4">
-            <FormLabel>{{ $t("jobs.media_link") }}</FormLabel>
-
-            <FormControl>
-              <Input type="text" v-bind="componentField" />
             </FormControl>
           </FormItem>
         </FormField>

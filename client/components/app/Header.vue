@@ -35,19 +35,22 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
           </div>
         </div>
 
-        <div class="flex gap-2 items-center" :class="{ 'text-white': main }">
+        <div class="flex gap-5 items-center" :class="{ 'text-white': main }">
           <NuxtLink
             v-if="!isAuthenticated"
             to="/auth"
             @click="useCookie('token').value = null"
           >
-            Login / Sign up
+            {{ $t("login_sign-up") }}
           </NuxtLink>
           <UserDropdown v-else main>
             {{ name }}
           </UserDropdown>
-          <LocaleSelect />
-          <ColorModeDropdown />
+
+          <div class="flex gap-1">
+            <LocaleSelect />
+            <ColorModeDropdown />
+          </div>
         </div>
       </nav>
     </div>
