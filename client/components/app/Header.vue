@@ -2,6 +2,10 @@
 import { useAuthStore } from "~/store/auth.store";
 import LocaleSelect from "../home/LocaleSelect.vue";
 
+const { main = false } = defineProps<{
+  main?: boolean;
+}>();
+
 const { isAuthenticated, name } = storeToRefs(useAuthStore());
 </script>
 
@@ -13,7 +17,10 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
       >
         <div class="flex gap-10 items-center">
           <NuxtLink to="/">
-            <span class="text-2xl font-bold text-gray-800 dark:text-gray-300">
+            <span
+              class="text-2xl font-bold text-gray-800 dark:text-gray-300"
+              :class="{ 'text-white': main }"
+            >
               Ms
             </span>
           </NuxtLink>
@@ -22,13 +29,13 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
             v-if="isAuthenticated"
             class="flex gap-0.5 sm:gap-2 md:gap-6 items-center"
           >
-            <NuxtLink to="/job-postings">
+            <NuxtLink to="/job-postings" :class="{ 'text-white': main }">
               {{ $t("jobs.my_vacancies") }}
             </NuxtLink>
           </div>
         </div>
 
-        <div class="flex gap-2 items-center">
+        <div class="flex gap-2 items-center" :class="{ 'text-white': main }">
           <NuxtLink
             v-if="!isAuthenticated"
             to="/auth"
@@ -36,7 +43,7 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
           >
             Login / Sign up
           </NuxtLink>
-          <UserDropdown v-else>
+          <UserDropdown v-else main>
             {{ name }}
           </UserDropdown>
           <LocaleSelect />

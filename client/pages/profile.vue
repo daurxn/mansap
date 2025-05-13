@@ -28,6 +28,11 @@ const profileLength = computed(() => Object.keys(data.value ?? {}).length);
       <div class="basis-1/2">
         <h1 class="text-3xl font-medium mb-6">{{ $t("profile.heading") }}</h1>
 
+        <div class="mb-4">
+          <NuxtImg src="/3135715.png" width="125" height="125" />
+        </div>
+        <Separator class="my-4" />
+
         <div class="mb-8">
           <template v-for="(value, key, idx) in data" :key="key">
             <div class="space-y-1">

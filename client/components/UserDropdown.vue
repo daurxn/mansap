@@ -39,12 +39,16 @@ const router = useRouter();
 function navigateToProfile() {
   router.push("/profile");
 }
+
+const { main = false } = defineProps<{
+  main?: boolean;
+}>();
 </script>
 
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="link">
+      <Button variant="link" :class="{ 'text-white': main }">
         <slot />
       </Button>
     </DropdownMenuTrigger>
