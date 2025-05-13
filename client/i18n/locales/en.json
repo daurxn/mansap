@@ -40,7 +40,9 @@
     "apply": "Apply now",
     "education": "Education",
     "resume": "resume",
-    "cover_letter": "Cover letter"
+    "cover_letter": "Cover letter",
+    "media_type": "Media type",
+    "media_link": "Link"
   },
   "profile": {
     "age": "Age",

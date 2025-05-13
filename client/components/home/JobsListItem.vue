@@ -17,7 +17,39 @@ const { job } = defineProps<{
       <CardHeader>
         <CardTitle class="font-normal">
           <div class="flex items-center gap-4">
-            <Image :size="42" />
+            <Dialog>
+              <DialogTrigger as-child>
+                <Image :size="42" />
+              </DialogTrigger>
+              <DialogContent class="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Media</DialogTitle>
+                  <DialogDescription>
+                    {{ job.mediaType }}
+                  </DialogDescription>
+                </DialogHeader>
+                <template v-if="job.mediaType !== 'none'">
+                  <NuxtImg
+                    v-if="job.mediaType === 'image'"
+                    :src="job.mediaLink"
+                  />
+                  <iframe
+                    v-else-if="job.mediaType === 'video'"
+                    class="max-w-[810px] w-full"
+                    height="390"
+                    :src="job.mediaLink"
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  />
+                </template>
+
+                <DialogFooter>
+                  <Button type="submit"> Save changes </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
             <div class="flex flex-col gap-2">
               <span class="font-semibold">{{ job.name }}</span>
               <div class="flex gap-2 text-sm">

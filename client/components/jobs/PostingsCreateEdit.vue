@@ -8,13 +8,6 @@ const isOpen = ref(false);
       <slot />
     </DialogTrigger>
 
-    <JobsPostingsCreateEditForm
-      @close="
-        () => {
-          console.log('test');
-          isOpen = false;
-        }
-      "
-    />
+    <JobsPostingsCreateEditForm @close="isOpen = false" />
   </Dialog>
 </template>

@@ -81,8 +81,12 @@ model Job {
   unit            Unit
   experienceLevel ExperienceLevel
   jobType         JobType
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+
+  mediaLink String?
+  mediaType String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   postedById Int
   postedBy   User @relation("PostedJobs", fields: [postedById], references: [id], onDelete: Restrict)

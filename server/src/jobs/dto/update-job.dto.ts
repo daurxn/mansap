@@ -10,6 +10,8 @@ import {
   MaxLength,
   MinLength,
   ArrayMinSize,
+  IsUrl,
+  IsIn,
 } from 'class-validator';
 
 export class UpdateJobDto {
@@ -76,4 +78,17 @@ export class UpdateJobDto {
     message: 'Each tag cannot be longer than 50 characters.',
   })
   tags?: string[];
+
+  @IsOptional()
+  @IsString({ message: 'Link must be a string.' })
+  @IsUrl({}, { message: 'Link must be a valid URL format.' })
+  @MaxLength(2048, { message: 'Link cannot be longer than 2048 characters.' }) // Added reasonable max length
+  mediaLink?: string;
+
+  @IsOptional()
+  @IsString({ message: 'Type must be a string.' })
+  @IsIn(['image', 'video', 'none'], {
+    message: 'Type must be either "image" or "video".',
+  })
+  mediaType?: string; // 'image' | 'video'
 }

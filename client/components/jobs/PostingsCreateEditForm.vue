@@ -32,6 +32,7 @@ const emit = defineEmits<{
 const ExperienceLevelEnumValues = ["JUNIOR", "MID", "SENIOR"] as const;
 const UnitEnumValues = ["HOUR", "DAY", "PROJECT"] as const;
 const JobTypeEnumValues = ["FULL_TIME", "PART_TIME", "CONTRACT"] as const;
+const MediaTypeEnumValues = ["none", "image", "video"] as const;
 
 const formSchema = toTypedSchema(
   z.object({
@@ -79,6 +80,10 @@ const formSchema = toTypedSchema(
         message: "If tags are provided, there must be at least one tag.",
       })
       .optional(),
+    mediaType: z.enum(MediaTypeEnumValues, {
+      required_error: "Media type is required.",
+    }),
+    mediaLink: z.string().min(2).max(1000),
   })
 );
 
@@ -97,6 +102,8 @@ if (job) {
   form.setFieldValue("experienceLevel", job.experienceLevel);
   form.setFieldValue("jobType", job.jobType);
   form.setFieldValue("locationId", job.locationId);
+  form.setFieldValue("mediaType", job.mediaType);
+  form.setFieldValue("mediaLink", job.mediaLink);
 
   form.setFieldValue(
     "tags",
@@ -141,173 +148,219 @@ const onSubmit = form.handleSubmit(async (values) => {
         <DialogDescription />
       </DialogHeader>
 
-      <FormField v-slot="{ componentField }" name="name">
-        <FormItem class="mb-2">
-          <FormLabel>{{ $t("jobs.name") }}</FormLabel>
+      <div class="max-h-[65vh] overflow-y-auto">
+        <FormField v-slot="{ componentField }" name="name">
+          <FormItem class="mb-4">
+            <FormLabel>{{ $t("jobs.name") }}</FormLabel>
 
-          <FormControl>
-            <Input type="text" v-bind="componentField" />
-          </FormControl>
-        </FormItem>
-      </FormField>
+            <FormControl>
+              <Input type="text" v-bind="componentField" />
+            </FormControl>
+          </FormItem>
+        </FormField>
 
-      <FormField v-slot="{ componentField }" name="description">
-        <FormItem class="mb-2">
-          <FormLabel>
-            {{ $t("description") }}
-          </FormLabel>
+        <FormField v-slot="{ componentField }" name="description">
+          <FormItem class="mb-4">
+            <FormLabel>
+              {{ $t("description") }}
+            </FormLabel>
 
-          <FormControl>
-            <Input type="text" v-bind="componentField" />
-          </FormControl>
-        </FormItem>
-      </FormField>
+            <FormControl>
+              <Input type="text" v-bind="componentField" />
+            </FormControl>
+          </FormItem>
+        </FormField>
 
-      <FormField
-        v-slot="{ componentField }"
-        name="experienceLevel"
-        type="radio"
-      >
-        <FormItem class="mb-2 flex gap-4">
-          <FormLabel>{{ $t("jobs.exp_level") }}</FormLabel>
+        <FormField
+          v-slot="{ componentField }"
+          name="experienceLevel"
+          type="radio"
+        >
+          <FormItem class="mb-4 flex gap-4">
+            <FormLabel>{{ $t("jobs.exp_level") }}</FormLabel>
 
-          <FormControl>
-            <RadioGroup v-bind="componentField" class="flex">
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="JUNIOR" />
-                </FormControl>
+            <FormControl>
+              <RadioGroup v-bind="componentField" class="flex">
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="JUNIOR" />
+                  </FormControl>
 
-                <FormLabel> Junior </FormLabel>
-              </FormItem>
+                  <FormLabel> Junior </FormLabel>
+                </FormItem>
 
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="MID" />
-                </FormControl>
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="MID" />
+                  </FormControl>
 
-                <FormLabel>Middle</FormLabel>
-              </FormItem>
+                  <FormLabel>Middle</FormLabel>
+                </FormItem>
 
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="SENIOR" />
-                </FormControl>
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="SENIOR" />
+                  </FormControl>
 
-                <FormLabel>Senior</FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-        </FormItem>
-      </FormField>
+                  <FormLabel>Senior</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+          </FormItem>
+        </FormField>
 
-      <FormField v-slot="{ componentField }" name="salary">
-        <FormItem class="mb-2">
-          <FormLabel> {{ $t("salary") }} ($) </FormLabel>
+        <FormField v-slot="{ componentField }" name="salary">
+          <FormItem class="mb-4">
+            <FormLabel> {{ $t("salary") }} ($) </FormLabel>
 
-          <FormControl>
-            <Input type="number" v-bind="componentField" />
-          </FormControl>
-        </FormItem>
-      </FormField>
+            <FormControl>
+              <Input type="number" v-bind="componentField" />
+            </FormControl>
+          </FormItem>
+        </FormField>
 
-      <FormField v-slot="{ componentField }" name="unit" type="radio">
-        <FormItem class="mb-2 flex gap-4">
-          <FormLabel>Unit</FormLabel>
+        <FormField v-slot="{ componentField }" name="unit" type="radio">
+          <FormItem class="mb-4 flex gap-4">
+            <FormLabel>Unit</FormLabel>
 
-          <FormControl>
-            <RadioGroup v-bind="componentField" class="flex">
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="HOUR" />
-                </FormControl>
+            <FormControl>
+              <RadioGroup v-bind="componentField" class="flex">
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="HOUR" />
+                  </FormControl>
 
-                <FormLabel> Hour </FormLabel>
-              </FormItem>
+                  <FormLabel> Hour </FormLabel>
+                </FormItem>
 
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="DAY" />
-                </FormControl>
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="DAY" />
+                  </FormControl>
 
-                <FormLabel>Day</FormLabel>
-              </FormItem>
+                  <FormLabel>Day</FormLabel>
+                </FormItem>
 
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="PROJECT" />
-                </FormControl>
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="PROJECT" />
+                  </FormControl>
 
-                <FormLabel>Project</FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-        </FormItem>
-      </FormField>
+                  <FormLabel>Project</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+          </FormItem>
+        </FormField>
 
-      <FormField v-slot="{ componentField }" name="jobType" type="radio">
-        <FormItem class="mb-2 flex gap-4">
-          <FormLabel>{{ $t("jobs.job_type") }}</FormLabel>
+        <FormField v-slot="{ componentField }" name="jobType" type="radio">
+          <FormItem class="mb-4 flex gap-4">
+            <FormLabel>{{ $t("jobs.job_type") }}</FormLabel>
 
-          <FormControl>
-            <RadioGroup v-bind="componentField" class="flex">
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="FULL_TIME" />
-                </FormControl>
+            <FormControl>
+              <RadioGroup v-bind="componentField" class="flex">
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="FULL_TIME" />
+                  </FormControl>
 
-                <FormLabel>Full time</FormLabel>
-              </FormItem>
+                  <FormLabel>Full time</FormLabel>
+                </FormItem>
 
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="PART_TIME" />
-                </FormControl>
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="PART_TIME" />
+                  </FormControl>
 
-                <FormLabel>Part time</FormLabel>
-              </FormItem>
+                  <FormLabel>Part time</FormLabel>
+                </FormItem>
 
-              <FormItem class="flex items-center">
-                <FormControl>
-                  <RadioGroupItem value="CONTRACT" />
-                </FormControl>
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="CONTRACT" />
+                  </FormControl>
 
-                <FormLabel>Contract</FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-        </FormItem>
-      </FormField>
+                  <FormLabel>Contract</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+          </FormItem>
+        </FormField>
 
-      <SelectLocation
-        class="mb-4 w-full"
-        @select="(locationId) => form.setFieldValue('locationId', locationId)"
-      />
+        <FormField v-slot="{ componentField }" name="mediaType" type="radio">
+          <FormItem class="mb-4">
+            <FormLabel>{{ $t("jobs.media_type") }}</FormLabel>
 
-      <FormField v-slot="{ componentField }" name="tags">
-        <FormItem>
-          <FormLabel>{{ $t("jobs.tags") }}</FormLabel>
+            <FormControl>
+              <RadioGroup v-bind="componentField" class="flex">
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="none" />
+                  </FormControl>
 
-          <FormControl>
-            <TagsInput
-              :model-value="componentField.modelValue"
-              @update:model-value="componentField['onUpdate:modelValue']"
-            >
-              <TagsInputItem
-                v-for="item in componentField.modelValue"
-                :key="item"
-                :value="item"
+                  <FormLabel>No media</FormLabel>
+                </FormItem>
+
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="image" />
+                  </FormControl>
+
+                  <FormLabel>Image</FormLabel>
+                </FormItem>
+
+                <FormItem class="flex items-center">
+                  <FormControl>
+                    <RadioGroupItem value="video" />
+                  </FormControl>
+
+                  <FormLabel>Video</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+          </FormItem>
+        </FormField>
+
+        <FormField v-slot="{ componentField }" name="mediaLink">
+          <FormItem class="mb-4">
+            <FormLabel>{{ $t("jobs.media_link") }}</FormLabel>
+
+            <FormControl>
+              <Input type="text" v-bind="componentField" />
+            </FormControl>
+          </FormItem>
+        </FormField>
+
+        <SelectLocation
+          class="mb-4 w-full"
+          @select="(locationId) => form.setFieldValue('locationId', locationId)"
+        />
+
+        <FormField v-slot="{ componentField }" name="tags">
+          <FormItem>
+            <FormLabel>{{ $t("jobs.tags") }}</FormLabel>
+
+            <FormControl>
+              <TagsInput
+                :model-value="componentField.modelValue"
+                @update:model-value="componentField['onUpdate:modelValue']"
               >
-                <TagsInputItemText />
+                <TagsInputItem
+                  v-for="item in componentField.modelValue"
+                  :key="item"
+                  :value="item"
+                >
+                  <TagsInputItemText />
 
-                <TagsInputItemDelete />
-              </TagsInputItem>
+                  <TagsInputItemDelete />
+                </TagsInputItem>
 
-              <TagsInputInput />
-            </TagsInput>
-          </FormControl>
-        </FormItem>
-      </FormField>
+                <TagsInputInput />
+              </TagsInput>
+            </FormControl>
+          </FormItem>
+        </FormField>
+      </div>
 
       <DialogFooter>
         <Button type="submit" form="newJob">
