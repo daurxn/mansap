@@ -1131,6 +1131,17 @@ const _inlineRuntimeConfig = {
               "cache": ""
             }
           ]
+        },
+        {
+          "code": "kk",
+          "name": "Казахский",
+          "language": "kk-KK",
+          "files": [
+            {
+              "path": "/Users/administrator/Desktop/mansap/client/i18n/locales/kk.json",
+              "cache": ""
+            }
+          ]
         }
       ],
       "detectBrowserLanguage": {

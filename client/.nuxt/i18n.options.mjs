@@ -2,10 +2,12 @@
 // @ts-nocheck
 import locale_en_46json_169ebc2b from "#nuxt-i18n/169ebc2b";
 import locale_ru_46json_1228261a from "#nuxt-i18n/1228261a";
+import locale_kk_46json_75448bec from "#nuxt-i18n/75448bec";
 
 export const localeCodes =  [
   "en",
-  "ru"
+  "ru",
+  "kk"
 ]
 
 export const localeLoaders = {
@@ -20,6 +22,13 @@ export const localeLoaders = {
     {
       key: "locale_ru_46json_1228261a",
       load: () => Promise.resolve(locale_ru_46json_1228261a),
+      cache: true
+    }
+  ],
+  kk: [
+    {
+      key: "locale_kk_46json_75448bec",
+      load: () => Promise.resolve(locale_kk_46json_75448bec),
       cache: true
     }
   ]
@@ -76,6 +85,17 @@ export const nuxtI18nOptions = {
           cache: undefined
         }
       ]
+    },
+    {
+      code: "kk",
+      name: "Казахский",
+      language: "kk-KK",
+      files: [
+        {
+          path: "/Users/administrator/Desktop/mansap/client/i18n/locales/kk.json",
+          cache: undefined
+        }
+      ]
     }
   ],
   defaultLocale: "en",
@@ -128,6 +148,17 @@ export const normalizedLocales = [
     files: [
       {
         path: "/Users/administrator/Desktop/mansap/client/i18n/locales/ru.json",
+        cache: undefined
+      }
+    ]
+  },
+  {
+    code: "kk",
+    name: "Казахский",
+    language: "kk-KK",
+    files: [
+      {
+        path: "/Users/administrator/Desktop/mansap/client/i18n/locales/kk.json",
         cache: undefined
       }
     ]
@@ -210,6 +241,11 @@ async function loadCfg(config) {
   import.meta.hot.accept("../i18n/locales/ru.json", async mod => {
     localeLoaders["ru"][0].load = () => Promise.resolve(mod.default)
     await useNuxtApp()._nuxtI18nDev.resetI18nProperties("ru")
+  })
+
+  import.meta.hot.accept("../i18n/locales/kk.json", async mod => {
+    localeLoaders["kk"][0].load = () => Promise.resolve(mod.default)
+    await useNuxtApp()._nuxtI18nDev.resetI18nProperties("kk")
   })
 
 

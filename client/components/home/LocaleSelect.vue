@@ -16,7 +16,7 @@ const { locales, setLocale, locale } = useI18n();
 <template>
   <Select
     :model-value="locale"
-    @update:model-value="(newLocale) => setLocale(newLocale as 'en' | 'ru')"
+    @update:model-value="(newLocale) => setLocale(newLocale as 'en' | 'ru' | 'kk')"
   >
     <SelectTrigger class="w-28">
       <SelectValue :placeholder="locale || 'Select locale'" />
