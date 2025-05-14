@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useToken } from "~/composables/auth/useToken";
 import type { Job } from "~/types/job";
 
 const props = defineProps<{
@@ -7,11 +8,15 @@ const props = defineProps<{
 
 const { search } = toRefs(props);
 
-const { data, refresh } = useFetch<Job[]>("/api/jobs", { query: { search } });
+const { data, refresh } = useFetch<Job[]>("/api/jobs", {
+  query: { search },
+  headers: {
+    Authorization: `Bearer ${useToken().value}`,
+  },
+  key: "/api/jobs",
+});
 
 const jobPostings = computed(() => data.value ?? []);
-
-console.log(data.value);
 
 watch(search, () => {
   refresh();

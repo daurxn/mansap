@@ -1,42 +1,26 @@
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
-import { useForm } from "vee-validate";
-import { toast } from "vue-sonner";
-import * as z from "zod";
-import { useToken } from "~/composables/auth/useToken";
+import { useApplyToJob } from "~/composables/jobs/useApplyToJob";
 
 const { jobId } = defineProps<{
   jobId: number;
 }>();
 
-const form = useForm({
-  validationSchema: toTypedSchema(
-    z.object({
-      coverLetter: z.string().min(10).max(1000),
-    })
-  ),
-});
+const isOpen = ref(false);
 
-const onSubmit = form.handleSubmit(async (values) => {
-  const res = await $fetch("/api/jobs/application", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${useToken().value}`,
-    },
-    body: { ...values, jobId },
-  });
-  console.log(res);
-  toast.success("Application has been submitted!");
-});
+const { onSubmit, isApplying } = useApplyToJob(
+  jobId,
+  () => (isOpen.value = false)
+);
 </script>
 
 <template>
-  <Dialog>
+  <Dialog v-model:open="isOpen">
     <DialogTrigger as-child>
       <slot />
     </DialogTrigger>
-    <form id="apply" class="space-y-5" @submit="onSubmit">
-      <DialogContent class="sm:max-w-[600px]">
+
+    <DialogContent class="sm:max-w-[60rem]">
+      <form id="apply" class="space-y-5" @submit="onSubmit">
         <DialogHeader>
           <DialogTitle>{{ $t("jobs.apply") }}</DialogTitle>
           <DialogDescription />
@@ -52,11 +36,11 @@ const onSubmit = form.handleSubmit(async (values) => {
         </FormField>
 
         <DialogFooter>
-          <Button type="submit" form="apply">
+          <Button :disabled="isApplying" type="submit" form="apply">
             {{ $t("jobs.apply") }}
           </Button>
         </DialogFooter>
-      </DialogContent>
-    </form>
+      </form>
+    </DialogContent>
   </Dialog>
 </template>

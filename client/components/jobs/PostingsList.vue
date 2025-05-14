@@ -14,6 +14,8 @@ const { data } = await useFetch<Job[]>("/api/jobs/mine", {
   key: "jobs_mine",
 });
 
+console.log(data.value);
+
 const myPostings = computed(() => data.value ?? []);
 
 async function handleDeleteJob(jobId: number) {
@@ -34,22 +36,17 @@ async function handleDeleteJob(jobId: number) {
           <div class="flex gap-2 items-center">
             <div class="flex items-center gap-1">
               <CircleDollarSign color="#5D3FD3" :size="20" />
-              ${{ job.salary }}/{{ job.jobType }}
+              ${{ job.salary }}/{{ $t(job.jobType) }}
             </div>
 
             <span>&#x2022;</span>
 
-            <span>X proposals</span>
+            <Badge variant="secondary">
+              {{ job._count.applications + " " + $t("applications") }}
+            </Badge>
           </div>
 
           <div class="flex gap-1.5 items-center">
-            <!-- <JobsPostingsCreateEdit>
-              <Button variant="outline" type="button" disabled>
-                <SquarePen />
-                {{ $t("edit") }}
-              </Button>
-            </JobsPostingsCreateEdit> -->
-
             <Popover>
               <PopoverTrigger as-child>
                 <Button variant="destructive">

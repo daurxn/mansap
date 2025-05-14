@@ -3,8 +3,6 @@ import Hero from "~/components/home/Hero.vue";
 import Jobs from "~/components/home/Jobs.vue";
 import JobSearch from "~/components/home/JobSearch.vue";
 
-const searchQuery = ref("");
-
 definePageMeta({
   layout: "custom",
 });
@@ -13,14 +11,12 @@ definePageMeta({
 <template>
   <div>
     <div class="background-hero">
-      <AppHeader main />
+      <AppHeader />
       <app-main>
         <EditProfileDialog />
-
         <Hero />
       </app-main>
     </div>
-    <Jobs :search="searchQuery" />
   </div>
 </template>
 

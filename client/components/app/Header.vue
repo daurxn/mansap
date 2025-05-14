@@ -2,11 +2,12 @@
 import { useAuthStore } from "~/store/auth.store";
 import LocaleSelect from "../home/LocaleSelect.vue";
 
-const { main = false } = defineProps<{
-  main?: boolean;
-}>();
-
 const { isAuthenticated, name } = storeToRefs(useAuthStore());
+const route = useRoute();
+
+const isIndexPage = computed(() => route.name === "index");
+
+const linkClass = computed(() => (isIndexPage.value ? "text-white" : ""));
 </script>
 
 <template>
@@ -19,7 +20,7 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
           <NuxtLink to="/">
             <span
               class="text-2xl font-bold text-gray-800 dark:text-gray-300"
-              :class="{ 'text-white': main }"
+              :class="{ 'text-white': isIndexPage }"
             >
               Ms
             </span>
@@ -29,13 +30,22 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
             v-if="isAuthenticated"
             class="flex gap-0.5 sm:gap-2 md:gap-6 items-center"
           >
-            <NuxtLink to="/job-postings" :class="{ 'text-white': main }">
+            <NuxtLink to="/find-work" :class="linkClass">
+              {{ $t("find_work") }}
+            </NuxtLink>
+            <NuxtLink to="/job-postings" :class="linkClass">
               {{ $t("jobs.my_vacancies") }}
+            </NuxtLink>
+            <NuxtLink to="/applications" :class="linkClass">
+              {{ $t("jobs.my_applications") }}
             </NuxtLink>
           </div>
         </div>
 
-        <div class="flex gap-5 items-center" :class="{ 'text-white': main }">
+        <div
+          class="flex gap-5 items-center"
+          :class="{ 'text-white': isIndexPage }"
+        >
           <NuxtLink
             v-if="!isAuthenticated"
             to="/auth"
@@ -43,13 +53,15 @@ const { isAuthenticated, name } = storeToRefs(useAuthStore());
           >
             {{ $t("login_sign-up") }}
           </NuxtLink>
-          <UserDropdown v-else main>
+          <UserDropdown :main="route.name === 'index'" v-else>
             {{ name }}
           </UserDropdown>
 
           <div class="flex gap-1">
             <LocaleSelect />
-            <ColorModeDropdown />
+            <ClientOnly>
+              <ColorModeDropdown />
+            </ClientOnly>
           </div>
         </div>
       </nav>

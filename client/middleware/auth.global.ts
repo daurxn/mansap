@@ -1,6 +1,11 @@
 import { useToken } from "~/composables/auth/useToken";
 
-const REQUIRED_AUTH_PATHS = ["/job-postings", "/profile"];
+const REQUIRED_AUTH_PATHS = [
+  "/job-postings",
+  "/profile",
+  "/find-work",
+  "/applications",
+];
 
 export default defineNuxtRouteMiddleware((to) => {
   const token = useToken();

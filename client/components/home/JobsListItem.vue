@@ -9,6 +9,12 @@ import CardTitle from "../ui/card/CardTitle.vue";
 const { job } = defineProps<{
   job: Job;
 }>();
+
+const router = useRouter();
+
+function navigateToJobPage() {
+  router.push(`/job-postings/${job.id}`);
+}
 </script>
 
 <template>
@@ -20,13 +26,19 @@ const { job } = defineProps<{
             <Image :size="42" />
 
             <div class="flex flex-col gap-2">
-              <span class="font-semibold">{{ job.name }}</span>
+              <Button
+                variant="link"
+                class="text-shadow-md"
+                @click="navigateToJobPage"
+              >
+                {{ job.name }}
+              </Button>
               <div class="flex gap-2 text-sm">
                 <span class="font-medium">{{ job.postedBy.name }}</span>
                 <span>&#x2022;</span>
                 <div class="flex items-center gap-0.5">
                   <MapPin :size="16" />
-                  <span> {{ job.location }}</span>
+                  <span> {{ job.location.name }}</span>
                 </div>
               </div>
             </div>

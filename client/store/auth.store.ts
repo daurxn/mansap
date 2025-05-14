@@ -16,11 +16,13 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = ref(false);
   const loading = ref(false);
 
+  const userId = ref<null | number>(null);
   const role = ref<null | string>(null);
   const email = ref<null | string>(null);
   const name = ref<null | string>(null);
 
   async function authenticateUser({ email, password }: UserPayloadInterface) {
+    loading.value = true;
     const { accessToken } = await $fetch<{ accessToken: string }>(
       "/api/auth/login",
       {
@@ -32,8 +34,6 @@ export const useAuthStore = defineStore("auth", () => {
         },
       }
     );
-
-    loading.value = true;
 
     if (accessToken) {
       toast("Logging in", {
@@ -70,6 +70,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function setProfile() {
     const { data } = await useFetch<{
+      id: number;
       name: string;
       email: string;
       role: string;
@@ -81,6 +82,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (data.value) {
       isAuthenticated.value = true;
+      userId.value = data.value.id;
       role.value = data.value.role;
       email.value = data.value.email;
       name.value = data.value.name;
@@ -101,6 +103,7 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     isAuthenticated,
     loading,
+    userId,
     role,
     email,
     name,

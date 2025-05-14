@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -35,8 +36,12 @@ export class JobsController {
   }
 
   @Get()
-  findAll(@Query('search') search?: string) {
-    return this.jobsService.findAll(search);
+  @UseGuards(AuthGuard)
+  findAll(
+    @Request() req: AuthenticatedRequest,
+    @Query('search') search?: string,
+  ) {
+    return this.jobsService.findAll(req.user.id, search);
   }
 
   @Get('mine')
@@ -45,9 +50,39 @@ export class JobsController {
     return this.jobsService.findByPostedById(req.user.id);
   }
 
+  @Get(':id/accept/:applicantId')
+  @UseGuards(AuthGuard)
+  acceptApplication(
+    @Request() req: AuthenticatedRequest,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('applicantId', ParseIntPipe) applicantId: number,
+  ) {
+    return this.jobsService.acceptApplication(req.user.id, id, applicantId);
+  }
+
+  @Get('applications')
+  @UseGuards(AuthGuard)
+  getApplications(@Request() req: AuthenticatedRequest) {
+    console.log('test');
+    return this.jobsService.getApplications(req.user.id);
+  }
+
+  @Post('applications')
+  @UseGuards(AuthGuard)
+  createApplication(
+    @Request() req: AuthenticatedRequest,
+    @Body() createApplicationDto: CreateApplicationDto,
+  ) {
+    return this.jobsService.createApplication(
+      req.user.id,
+      createApplicationDto,
+    );
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobsService.findOne(+id);
+  @UseGuards(AuthGuard)
+  findOne(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
+    return this.jobsService.findOne(req.user.id, +id);
   }
 
   @Patch(':id')
@@ -58,17 +93,5 @@ export class JobsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.jobsService.remove(+id);
-  }
-
-  @Post('application')
-  @UseGuards(AuthGuard)
-  createApplication(
-    @Request() req: AuthenticatedRequest,
-    @Body() createApplicationDto: CreateApplicationDto,
-  ) {
-    return this.jobsService.createApplication(
-      req.user.id,
-      createApplicationDto,
-    );
   }
 }

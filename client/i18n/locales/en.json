@@ -4,7 +4,7 @@
   "add": "Add",
   "save_changes": "Save changes",
   "logout": "Logout",
-  "select": "Select {0}",
+  "select": "Select",
   "region": "region",
   "gender": "gender",
   "delete": "Delete",
@@ -12,6 +12,17 @@
   "create": "Create {0}",
   "applications": "{num} applications",
   "login_sign-up": "Login / Sign up",
+  "find_work": "Find work",
+  "you_applied": "You've applied",
+  "FULL_TIME": "full time",
+  "PART_TIME": "part time",
+  "CONTRACT": "contract",
+  "posted_at": "Posted at",
+  "exp_level": {
+    "JUNIOR": "Junior",
+    "MID": "Middle",
+    "SENIOR": "Senior"
+  },
   "home": {
     "hero_title": "The #1 job board for freelance jobs",
     "hero_description": "Looking for a job? browse latest freelance job openings to view & apply!",
@@ -41,7 +52,8 @@
     "apply": "Apply now",
     "education": "Education",
     "resume": "resume",
-    "cover_letter": "Cover letter"
+    "cover_letter": "Cover letter",
+    "my_applications": "My applications"
   },
   "profile": {
     "age": "Age",

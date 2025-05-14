@@ -8,6 +8,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import { Job } from '@prisma/client';
 
 @Injectable()
 export class JobsService {
@@ -28,9 +29,9 @@ export class JobsService {
     return this.prisma.job.create({ data: newJob });
   }
 
-  findAll(search?: string, locationId?: number) {
+  async findAll(userId: number, search?: string) {
     // build dynamic where clauses
-    const where: any = {};
+    const where: Record<string, any> = {};
 
     if (search) {
       where.OR = [
@@ -44,12 +45,7 @@ export class JobsService {
       ];
     }
 
-    if (locationId) {
-      // only return jobs tied to this location
-      where.locationId = locationId;
-    }
-
-    return this.prisma.job.findMany({
+    const jobs = await this.prisma.job.findMany({
       where: {
         OR: [
           { name: { contains: search, mode: 'insensitive' } },
@@ -69,8 +65,25 @@ export class JobsService {
             applications: true,
           },
         },
+        location: true,
       },
     });
+
+    const result: (Job & { applied: boolean; is_applicable: boolean })[] = [];
+
+    for (const job of jobs) {
+      const applications = await this.prisma.application.findMany({
+        where: { jobId: job.id },
+      });
+
+      result.push({
+        ...job,
+        applied: applications.some((app) => app.applicantId === userId),
+        is_applicable: job.postedById !== userId,
+      });
+    }
+
+    return result;
   }
 
   findByPostedById(id: number) {
@@ -79,18 +92,35 @@ export class JobsService {
       include: {
         postedBy: { select: { email: true, name: true } },
         tags: true,
+        location: true,
+        _count: {
+          select: {
+            applications: true,
+          },
+        },
       },
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.job.findFirst({
-      where: { id },
+  async findOne(userId: number, id: number) {
+    const job = await this.prisma.job.findFirst({
+      where: { id: id },
       include: {
-        postedBy: { select: { email: true, name: true } },
+        postedBy: { select: { email: true, name: true, id: true } },
         tags: { select: { name: true } },
+        applications: { include: { applicant: true, resume: true } },
       },
     });
+
+    const jobs = await this.prisma.application.findMany({
+      select: { job: { select: { id: true } } },
+    });
+
+    const applied = job && jobs.some((j) => j.job.id === job.id);
+
+    const is_applicable = job?.postedById !== userId;
+
+    return { ...job, is_applicable, applied };
   }
 
   update(id: number, updateJobDto: UpdateJobDto) {
@@ -180,5 +210,32 @@ export class JobsService {
         );
       }
     }
+  }
+
+  getApplications(userId: number) {
+    return this.prisma.application.findMany({
+      where: { applicantId: userId },
+      include: {
+        job: {
+          include: {
+            location: true,
+            tags: true,
+            postedBy: true,
+            _count: {
+              select: {
+                applications: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async acceptApplication(userId: number, jobId: number, applicantId: number) {
+    return this.prisma.job.update({
+      where: { id: jobId },
+      data: { filledById: applicantId },
+    });
   }
 }
