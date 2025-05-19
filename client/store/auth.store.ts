@@ -14,7 +14,7 @@ export const useAuthStore = defineStore("auth", () => {
   const router = useRouter();
 
   const isAuthenticated = ref(false);
-  const loading = ref(false);
+  const isLoading = ref(false);
 
   const userId = ref<null | number>(null);
   const role = ref<null | string>(null);
@@ -22,7 +22,7 @@ export const useAuthStore = defineStore("auth", () => {
   const name = ref<null | string>(null);
 
   async function authenticateUser({ email, password }: UserPayloadInterface) {
-    loading.value = true;
+    isLoading.value = true;
     const { accessToken } = await $fetch<{ accessToken: string }>(
       "/api/auth/login",
       {
@@ -49,7 +49,7 @@ export const useAuthStore = defineStore("auth", () => {
       });
     }
 
-    loading.value = false;
+    isLoading.value = false;
   }
 
   async function registerUser({ email, name, password }: RegisterPayload) {
@@ -102,7 +102,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   return {
     isAuthenticated,
-    loading,
+    isLoading,
     userId,
     role,
     email,

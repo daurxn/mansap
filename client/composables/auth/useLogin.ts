@@ -3,9 +3,12 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useAuthStore } from "~/store/auth.store";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 
 export function useLogin() {
-  const { authenticateUser, loading: loggingIn } = useAuthStore();
+  const authStore = useAuthStore();
+  const { isLoading: loggingIn } = storeToRefs(authStore);
+  const { authenticateUser } = authStore;
   const router = useRouter();
 
   const formSchema = toTypedSchema(

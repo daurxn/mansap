@@ -1559,7 +1559,7 @@ const _VWnwOGiUxR2c4l2JkJZUzj6gQP3QPRVIob4H2zKsXRE = (function(nitro) {
 
 const rootDir = "/Users/administrator/Desktop/mansap/client";
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[],"style":[],"script":[],"noscript":[]};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[],"style":[],"script":[],"noscript":[],"title":"Ms","titleTemplate":"%s - Ms"};
 
 const appRootTag = "div";
 

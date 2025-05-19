@@ -15,6 +15,8 @@ const { data: job } = useFetch<Job>(`/api/jobs/${id}`, {
   key: `/api/jobs/${id}`,
 });
 
+console.log(job.value);
+
 const isRecruiter = computed(() => userId.value === job.value?.postedById);
 
 async function handleFillJob(applicantId: number) {

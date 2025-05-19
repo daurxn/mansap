@@ -87,6 +87,7 @@ const form = useForm({
   validationSchema: formSchema,
 });
 
+const isSubmitting = ref(false);
 const isEditMode = computed(() => job !== null);
 
 if (job) {
@@ -105,31 +106,39 @@ if (job) {
 }
 
 const onSubmit = form.handleSubmit(async (values) => {
+  isSubmitting.value = true;
   const headers = {
     Authorization: `Bearer ${useToken().value}`,
   };
 
-  if (isEditMode.value && job) {
-    await $fetch(`/api/jobs/${job.id}`, {
-      method: "PATCH",
-      body: values,
-      headers,
-    });
+  try {
+    if (isEditMode.value && job) {
+      await $fetch(`/api/jobs/${job.id}`, {
+        method: "PATCH",
+        body: values,
+        headers,
+      });
 
-    toast.success("Job post was updated!");
-  } else {
-    await $fetch("/api/jobs", {
-      method: "POST",
-      body: values,
-      headers,
-    });
+      toast.success("Job post was updated!");
+    } else {
+      await $fetch("/api/jobs", {
+        method: "POST",
+        body: values,
+        headers,
+      });
 
-    await refreshNuxtData("jobs_mine");
-    toast.success("Job post was created successfully!");
-    form.resetForm();
+      await refreshNuxtData("jobs_mine");
+      toast.success("Job post was created successfully!");
+      form.resetForm();
+    }
+
+    emit("close");
+  } catch (error) {
+    console.error("Failed to save job posting:", error);
+    toast.error("Failed to save job posting. Please try again.");
+  } finally {
+    isSubmitting.value = false;
   }
-
-  emit("close");
 });
 </script>
 
@@ -312,7 +321,7 @@ const onSubmit = form.handleSubmit(async (values) => {
       </div>
 
       <DialogFooter>
-        <Button type="submit" form="newJob">
+        <Button type="submit" form="newJob" :disabled="isSubmitting">
           {{ isEditMode ? $t("edit") : $t("add") }}
         </Button>
       </DialogFooter>

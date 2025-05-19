@@ -1,91 +1,37 @@
-import { describe, it, expect, vi } from "vitest";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
-import HeroHeading from "~/components/home/HeroHeading.vue";
+import { describe, it, expect, mock } from 'bun:test'
+import { render, screen } from '@testing-library/vue'
+import HeroHeading from '~/components/home/HeroHeading.vue'
 
-describe("HeroTitle.vue", () => {
-  const mockTranslatedText = "Mocked Hero Title";
+// Mock the i18n composable
+const mockT = mock((key: string) => key === 'home.hero_title' ? 'Mocked Hero Title' : key)
 
-  it("renders the h1 element", async () => {
-    const wrapper = await mountSuspended(HeroHeading, {
+describe('HeroHeading.vue', () => {
+  it('renders with correct content and classes', () => {
+    render(HeroHeading, {
       global: {
         mocks: {
-          $t: (key: string) =>
-            key === "home.hero_title" ? mockTranslatedText : key,
-        },
-      },
-    });
-
-    const heading = wrapper.find("h1");
-    expect(heading.exists()).toBe(true);
-  });
-
-  it("displays the translated hero title", async () => {
-    const wrapper = await mountSuspended(HeroHeading, {
-      global: {
-        mocks: {
-          $t: (key: string) =>
-            key === "home.hero_title" ? mockTranslatedText : key,
-        },
-      },
-    });
-
-    const heading = wrapper.find("h1");
-    expect(heading.text()).toBe(mockTranslatedText);
-  });
-
-  it("applies all the correct CSS classes to the h1 element", async () => {
-    const tMock = vi.fn().mockImplementation((key) => {
-      if (key === "home.hero_title") {
-        return mockTranslatedText;
+          $t: mockT
+        }
       }
-      return key;
-    });
+    })
 
-    const wrapper = await mountSuspended(HeroHeading, {
-      global: {
-        mocks: {
-          $t: tMock,
-        },
-      },
-    });
-
-    const heading = wrapper.find("h1");
-    expect(heading.exists()).toBe(true);
+    const heading = screen.getByRole('heading', { level: 1 })
+    expect(heading).toBeDefined()
+    expect(heading.textContent).toBe('Mocked Hero Title')
+    expect(mockT).toHaveBeenCalledWith('home.hero_title')
 
     const expectedClasses = [
-      "text-4xl",
-      "mx-auto",
-      "text-center",
-      "mb-4",
-      "font-medium",
-      "w-[28rem]",
-      "leading-11",
-    ];
+      'text-4xl',
+      'mx-auto',
+      'text-center',
+      'mb-4',
+      'font-medium',
+      'w-[28rem]',
+      'leading-11'
+    ]
 
-    // Get the actual classes from the wrapper
-    const actualClasses = heading.classes();
-
-    // Check that all expected classes are present
-    expectedClasses.forEach((className) => {
-      expect(actualClasses).toContain(className);
-    });
-
-    // Verify no unexpected classes are present
-    expect(actualClasses.length).toBe(expectedClasses.length);
-  });
-
-  it("calls the $t function with the correct key", async () => {
-    const tMock = vi.fn().mockReturnValue(mockTranslatedText);
-
-    await mountSuspended(HeroHeading, {
-      global: {
-        mocks: {
-          $t: tMock,
-        },
-      },
-    });
-
-    expect(tMock).toHaveBeenCalledTimes(1);
-    expect(tMock).toHaveBeenCalledWith("home.hero_title");
-  });
-});
+    expectedClasses.forEach(className => {
+      expect(heading.classList.contains(className)).toBe(true)
+    })
+  })
+})

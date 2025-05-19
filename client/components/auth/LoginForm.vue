@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogin } from "~/composables/auth/useLogin";
 
-const { onSubmit, loggingIn, isLoggingIn } = useLogin();
+const { onSubmit, loggingIn } = useLogin();
 </script>
 
 <template>

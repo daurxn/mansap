@@ -41,7 +41,9 @@
   "type": "module",
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.5.2",
-    "@vue/test-utils": "^2.4.6",
+    "@testing-library/vue": "^8.1.0",
+    "@types/testing-library__vue": "^5.3.0",
+    "@vue/test-utils": "2.4.4",
     "happy-dom": "^17.4.6",
     "vitest": "^3.1.3"
   }
