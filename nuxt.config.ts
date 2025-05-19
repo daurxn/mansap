@@ -7,9 +7,9 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Ms',
-      titleTemplate: '%s - Ms'
-    }
+      title: "Ms",
+      titleTemplate: "%s - Ms",
+    },
   },
 
   modules: [
@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     routeRules: {
       "/api/**": {
         proxy: {
-          to: "http://localhost:3001/api/**",
+          to: "https://mansap-server.vercel.app/api/**",
         },
       },
     },
