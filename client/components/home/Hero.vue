@@ -15,7 +15,7 @@ function navigateToFindWork() {
     <HeroHeading />
     <HeroDescription />
     <Button variant="outline" size="lg" @click="navigateToFindWork">
-      Найти работу мечты
+      {{ $t("home.find_dream_job") }}
     </Button>
   </div>
 </template>

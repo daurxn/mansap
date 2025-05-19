@@ -1,121 +1,46 @@
-# ======================================================================
-# General / Common
-# These apply to the whole project or are common across subdirectories.
-# ======================================================================
-
-# OS generated files
 .DS_Store
-
-# Common Node.js specific log files (often appear at project root)
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log* # If Lerna is used at the root
-
-# IDE - General (applied if found in root or if not specific to a subproject)
-# Specific IDE folders like .idea, .vscode, .fleet are handled per sub-project below
-# to avoid conflicts if they exist in multiple places with different negated rules.
-.project # Eclipse
-.classpath # Eclipse
-.c9/ # Cloud9
-*.launch # Eclipse
-.settings/ # Eclipse
-*.sublime-workspace # Sublime Text
-
-# Environment variable files
-# Ignore all .env files in any directory, then specifically unignore examples.
-# This covers .env, .env.local, .env.development, .env.production, etc. in root, /server, /frontend, etc.
+lerna-debug.log*
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 **/.env
 **/.env.*
-# IMPORTANT: Un-ignore any .env.example files you WANT to commit.
-# Adjust paths as necessary (e.g., /frontend/.env.example, /server/.env.example, .env.example for root).
-# Based on your client's .gitignore which was in /frontend:
 !/frontend/.env.example
-# If your server also has an .env.example to commit, add it like:
-# !/server/.env.example
-# If your root project has an .env.example to commit, add it like:
-# !.env.example
-
-
-# ======================================================================
-# Server specific (patterns relative to /server/)
-# ======================================================================
-
-# Compiled output & Dependencies
-/server/dist/
 /server/node_modules/
-/server/build/
-
-# Logs
-# Assuming 'logs' from server's .gitignore refers to a directory /server/logs/
 /server/logs/
-# Assuming '*.log' from server's .gitignore refers to logs directly within /server/
 /server/*.log
-
-# Tests
 /server/coverage/
 /server/.nyc_output/
-
-# IDEs and editors
-# ' /.idea' from server's .gitignore becomes /server/.idea/
 /server/.idea/
-
-# IDE - VSCode for server
-# '.vscode/*' from server's .gitignore becomes /server/.vscode/*
 /server/.vscode/*
 !/server/.vscode/settings.json
 !/server/.vscode/tasks.json
 !/server/.vscode/launch.json
 !/server/.vscode/extensions.json
-
-# Runtime data
-# Assuming 'pids' refers to a directory /server/pids/ or files matching 'pids*'
-/server/pids/ # If it's a directory
-# If 'pids' refers to files starting with 'pids', use /server/pids*
+/server/pids/
 /server/*.pid
 /server/*.seed
 /server/*.pid.lock
-
-# Diagnostic reports (Node.js)
 /server/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# Temp directory
-# '.temp' and '.tmp' from server's .gitignore become /server/.temp/ and /server/.tmp/
 /server/.temp/
 /server/.tmp/
-
-
-# ======================================================================
-# Frontend specific (patterns relative to /frontend/) - Nuxt
-# ======================================================================
-
-# Nuxt dev/build outputs
-# '.output' from client's .gitignore becomes /frontend/.output/
 /frontend/.output/
 /frontend/.data/
 /frontend/.nuxt/
 /frontend/.nitro/
 /frontend/.cache/
-# 'dist' from client's .gitignore becomes /frontend/dist/
 /frontend/dist/
-
-# Node dependencies
-# 'node_modules' from client's .gitignore becomes /frontend/node_modules/
 /frontend/node_modules/
-
-# Logs
-# Assuming 'logs' from client's .gitignore refers to a directory /frontend/logs/
 /frontend/logs/
-# Assuming '*.log' from client's .gitignore refers to logs directly within /frontend/
 /frontend/*.log
-
-# Misc IDE / Editor
-# '.idea' from client's .gitignore becomes /frontend/.idea/
 /frontend/.idea/
-# '.fleet' from client's .gitignore becomes /frontend/.fleet/
 /frontend/.fleet/
-
 /server/node_modules
-/server/dist
 /client/node_modules

@@ -18,6 +18,8 @@
   "PART_TIME": "жартылай жұмыс күні",
   "CONTRACT": "келісімшарт",
   "posted_at": "Жарияланды",
+  "results": "Нәтижелер",
+  "actions": "Әрекеттер",
   "exp_level": {
     "JUNIOR": "Кіші",
     "MID": "Орта",
@@ -28,7 +30,8 @@
     "hero_description": "Жұмыс іздеп жүрсіз бе? Соңғы фриланс бос жұмыс орындарын қарап, өтінім беріңіз!",
     "search_job": "Жұмыс іздеу",
     "city": "Қала",
-    "search": "Іздеу"
+    "search": "Іздеу",
+    "find_dream_job": "Армандаған жұмыс табу"
   },
   "auth": {
     "signup_title": "Тіркелу",
@@ -51,9 +54,10 @@
     "posting_job": "Жұмыс қосу",
     "apply": "Өтініш беру",
     "education": "Білім",
-    "resume": "түйіндеме",
+    "resume": "Түйіндеме",
     "cover_letter": "Ілеспе хат",
-    "my_applications": "Менің өтінімдерім"
+    "my_applications": "Менің өтінімдерім",
+    "applied_at": "Үн қатты"
   },
   "profile": {
     "age": "Жасы",

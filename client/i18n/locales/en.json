@@ -18,6 +18,8 @@
   "PART_TIME": "part time",
   "CONTRACT": "contract",
   "posted_at": "Posted at",
+  "results": "Results",
+  "actions": "Actions",
   "exp_level": {
     "JUNIOR": "Junior",
     "MID": "Middle",
@@ -28,7 +30,8 @@
     "hero_description": "Looking for a job? browse latest freelance job openings to view & apply!",
     "search_job": "Search job",
     "city": "City",
-    "search": "Search"
+    "search": "Search",
+    "find_dream_job": "Find your dream job"
   },
   "auth": {
     "signup_title": "Registration",
@@ -51,9 +54,10 @@
     "posting_job": "Posting job",
     "apply": "Apply now",
     "education": "Education",
-    "resume": "resume",
+    "resume": "Resume",
     "cover_letter": "Cover letter",
-    "my_applications": "My applications"
+    "my_applications": "My applications",
+    "applied_at": "Applied at"
   },
   "profile": {
     "age": "Age",

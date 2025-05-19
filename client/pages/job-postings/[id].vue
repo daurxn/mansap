@@ -83,11 +83,13 @@ console.log(job.value);
       <Table v-if="isRecruiter">
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead class="w-[500px]">Cover Letter</TableHead>
-            <TableHead>Resume</TableHead>
-            <TableHead>Applied at</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>{{ $t("name") }}</TableHead>
+            <TableHead class="w-[500px]">{{
+              $t("jobs.cover_letter")
+            }}</TableHead>
+            <TableHead>{{ $t("jobs.resume") }}</TableHead>
+            <TableHead>{{ $t("jobs.applied_at") }}</TableHead>
+            <TableHead>{{ $t("actions") }}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -114,7 +116,7 @@ console.log(job.value);
             <TableCell>
               <Popover>
                 <PopoverTrigger as-child>
-                  <Button>{{ "select" }}</Button>
+                  <Button>{{ $t("select") }}</Button>
                 </PopoverTrigger>
                 <PopoverContent class="w-64">
                   <p class="text-sm mb-2">Are you sure you want to delete?</p>

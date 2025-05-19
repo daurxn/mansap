@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const { count } = defineProps<{
-    count: number
-}>()
+  count: number;
+}>();
 </script>
 
 <template>
-    <span class="font-medium">Showing results ({{ count }})</span>
+  <span class="font-medium">{{ $t("results") }} ({{ count }})</span>
 </template>
