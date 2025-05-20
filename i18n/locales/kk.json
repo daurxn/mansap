@@ -57,7 +57,9 @@
     "resume": "Түйіндеме",
     "cover_letter": "Ілеспе хат",
     "my_applications": "Менің өтінімдерім",
-    "applied_at": "Үн қатты"
+    "applied_at": "Үн қатты",
+    "you_sure_want_to_delete": "Сіз жойғыңыз келетініне сенімдісіз бе?",
+    "you_sure_want_to_select_this": "Сіз мұны таңдағыңыз келетініне сенімдісіз бе?"
   },
   "profile": {
     "age": "Жасы",

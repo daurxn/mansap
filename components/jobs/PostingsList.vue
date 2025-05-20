@@ -55,7 +55,9 @@ async function handleDeleteJob(jobId: number) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent class="w-64">
-                <p class="text-sm mb-2">Are you sure you want to delete?</p>
+                <p class="text-sm mb-2">
+                  {{ $t("jobs.you_sure_want_to_delete") }}
+                </p>
                 <PopoverClose class="flex gap-2 justify-end w-full">
                   <Button size="sm" variant="ghost">No</Button>
                   <Button

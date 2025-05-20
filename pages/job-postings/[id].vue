@@ -20,7 +20,6 @@ console.log(job.value);
 const isRecruiter = computed(() => userId.value === job.value?.postedById);
 
 async function handleFillJob(applicantId: number) {
-  console.log("test");
   await $fetch(`/api/jobs/${id}/accept/${applicantId}`, {
     headers: {
       Authorization: `Bearer ${useToken().value}`,
@@ -36,16 +35,18 @@ console.log(job.value);
 <template>
   <app-main>
     <app-container v-if="job">
-      <h1 class="text-2xl font-medium mb-2">{{ job.name }}</h1>
-      <ul class="flex gap-2 font-medium mb-4">
-        <li
-          v-for="tag in job.tags"
-          :key="tag.id"
-          class="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-xs"
-        >
-          {{ tag.name }}
-        </li>
-      </ul>
+      <div class="flex justify-between">
+        <h1 class="text-2xl font-medium mb-2">{{ job.name }}</h1>
+        <ul class="flex gap-2 font-medium mb-4">
+          <li
+            v-for="tag in job.tags"
+            :key="tag.id"
+            class="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-xs"
+          >
+            {{ tag.name }}
+          </li>
+        </ul>
+      </div>
       <p class="text-gray-600 mb-5">{{ job.description }}</p>
       <ul class="mb-4">
         <li>
@@ -119,14 +120,12 @@ console.log(job.value);
                   <Button>{{ $t("select") }}</Button>
                 </PopoverTrigger>
                 <PopoverContent class="w-64">
-                  <p class="text-sm mb-2">Are you sure you want to delete?</p>
+                  <p class="text-sm mb-2">
+                    {{ $t("jobs.you_sure_want_to_select_this") }}
+                  </p>
                   <PopoverClose class="flex gap-2 justify-end w-full">
                     <Button size="sm" variant="ghost">No</Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      @click="handleFillJob(app.applicantId)"
-                    >
+                    <Button size="sm" @click="handleFillJob(app.applicantId)">
                       Yes
                     </Button>
                   </PopoverClose>

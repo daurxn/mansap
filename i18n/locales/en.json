@@ -57,7 +57,9 @@
     "resume": "Resume",
     "cover_letter": "Cover letter",
     "my_applications": "My applications",
-    "applied_at": "Applied at"
+    "applied_at": "Applied at",
+    "you_sure_want_to_delete": "Are you sure you want to delete?",
+    "you_sure_want_to_select_this": "Are you sure you want to select this?"
   },
   "profile": {
     "age": "Age",

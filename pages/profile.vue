@@ -2,6 +2,7 @@
 import EditProfileDialog from "~/components/EditProfileDialog.vue";
 import Separator from "~/components/ui/separator/Separator.vue";
 import { useToken } from "~/composables/auth/useToken";
+import type { Resume } from "~/types/resume";
 
 const headers = {
   Authorization: `Bearer ${useToken().value}`,
@@ -12,12 +13,13 @@ const { data } = useFetch<Record<string, unknown>>("/api/profile", {
   key: "profile",
 });
 
-const { data: resume } = useFetch("/api/profile/resume", {
-  headers,
-  key: "resume",
-});
-
-console.log(resume.value);
+const { data: resumeW } = useFetch<{ data?: Resume; message: string }>(
+  "/api/profile/resume",
+  {
+    headers,
+    key: "resume",
+  }
+);
 
 const profileLength = computed(() => Object.keys(data.value ?? {}).length);
 </script>
@@ -54,7 +56,7 @@ const profileLength = computed(() => Object.keys(data.value ?? {}).length);
 
       <div class="basis-1/2">
         <h1 class="text-3xl font-medium mb-6">{{ $t("profile.resume") }}</h1>
-        <ProfileCreateEditResumeDialog v-if="!resume">
+        <ProfileCreateEditResumeDialog v-if="!resumeW?.data">
           <Button size="lg">{{ $t("create") }}</Button>
         </ProfileCreateEditResumeDialog>
         <template v-else>
@@ -63,7 +65,7 @@ const profileLength = computed(() => Object.keys(data.value ?? {}).length);
               {{ $t(`jobs.exp_level`) }}
             </h4>
             <p class="text-sm text-muted-foreground">
-              {{ resume.workExperience }}
+              {{ resumeW.data.workExperience }}
             </p>
           </div>
           <Separator class="my-4" />
@@ -72,7 +74,7 @@ const profileLength = computed(() => Object.keys(data.value ?? {}).length);
               {{ $t(`jobs.education`) }}
             </h4>
             <p class="text-sm text-muted-foreground">
-              {{ resume.education }}
+              {{ resumeW.data.education }}
             </p>
           </div>
         </template>
