@@ -20,6 +20,8 @@
   "posted_at": "Posted at",
   "results": "Results",
   "actions": "Actions",
+  "yes": "Yes",
+  "no": "No",
   "exp_level": {
     "JUNIOR": "Junior",
     "MID": "Middle",

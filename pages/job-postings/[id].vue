@@ -1,35 +1,84 @@
 <script setup lang="ts">
+import { Paperclip } from "lucide-vue-next";
 import { PopoverClose } from "reka-ui";
 import { toast } from "vue-sonner";
 import { useToken } from "~/composables/auth/useToken";
 import { useAuthStore } from "~/store/auth.store";
+import type { Chat } from "~/types/chat";
 import type { Job } from "~/types/job";
 
 const { userId } = storeToRefs(useAuthStore());
 const { id } = useRoute().params;
+const token = useToken();
+const fileRef = useTemplateRef<HTMLInputElement>("fileRef");
 
-const { data: job } = useFetch<Job>(`/api/jobs/${id}`, {
-  headers: {
-    Authorization: `Bearer ${useToken().value}`,
-  },
+const headers = computed(() => ({
+  Authorization: `Bearer ${token.value}`,
+}));
+
+const { data: job } = await useFetch<Job>(`/api/jobs/${id}`, {
+  headers: headers.value,
   key: `/api/jobs/${id}`,
 });
 
-console.log(job.value);
+const { data: chat, refresh } = await useAsyncData<Chat | null>(
+  `chat-${id}`,
+  async () => {
+    if (
+      job.value &&
+      userId.value &&
+      job.value.filledById &&
+      job.value.postedById &&
+      [job.value.filledById, job.value.postedById].includes(userId.value)
+    ) {
+      return $fetch(`/api/chat/jobs/${id}`, {
+        headers: headers.value,
+      });
+    } else {
+      return null;
+    }
+  }
+);
+
+const message = ref("");
+const isSending = ref(false);
+const files = ref<null | FileList>(null);
 
 const isRecruiter = computed(() => userId.value === job.value?.postedById);
 
 async function handleFillJob(applicantId: number) {
+  isSending.value = true;
   await $fetch(`/api/jobs/${id}/accept/${applicantId}`, {
     headers: {
       Authorization: `Bearer ${useToken().value}`,
     },
   });
+  isSending.value = false;
   await refreshNuxtData(`/api/jobs/${id}`);
   toast.success("Заявка была принята успешно!");
 }
 
-console.log(job.value);
+async function handleSendMessage() {
+  if (!message.value || !chat.value) return;
+
+  await $fetch("/api/chat/message", {
+    method: "POST",
+    headers: headers.value,
+    body: {
+      chatId: chat.value.id,
+      content: message.value,
+    },
+  });
+
+  message.value = "";
+  refresh();
+}
+
+function previewFiles(event: InputEvent) {
+  const input = event.target as HTMLInputElement;
+  console.log(input.files);
+  files.value = input.files;
+}
 </script>
 
 <template>
@@ -81,13 +130,13 @@ console.log(job.value);
         </Button>
       </template>
 
-      <Table v-if="isRecruiter">
+      <Table v-if="isRecruiter" class="mb-8">
         <TableHeader>
           <TableRow>
-            <TableHead>{{ $t("name") }}</TableHead>
-            <TableHead class="w-[500px]">{{
-              $t("jobs.cover_letter")
-            }}</TableHead>
+            <TableHead>{{ $t("jobs.name") }}</TableHead>
+            <TableHead class="w-[32rem]">
+              {{ $t("jobs.cover_letter") }}
+            </TableHead>
             <TableHead>{{ $t("jobs.resume") }}</TableHead>
             <TableHead>{{ $t("jobs.applied_at") }}</TableHead>
             <TableHead>{{ $t("actions") }}</TableHead>
@@ -115,7 +164,9 @@ console.log(job.value);
               }}
             </TableCell>
             <TableCell>
-              <Popover>
+              <span v-if="job.filledById === app.applicantId">Выбрано</span>
+
+              <Popover v-if="!job.filledById">
                 <PopoverTrigger as-child>
                   <Button>{{ $t("select") }}</Button>
                 </PopoverTrigger>
@@ -124,9 +175,9 @@ console.log(job.value);
                     {{ $t("jobs.you_sure_want_to_select_this") }}
                   </p>
                   <PopoverClose class="flex gap-2 justify-end w-full">
-                    <Button size="sm" variant="ghost">No</Button>
+                    <Button size="sm" variant="ghost">{{ $t("no") }}</Button>
                     <Button size="sm" @click="handleFillJob(app.applicantId)">
-                      Yes
+                      {{ $t("yes") }}
                     </Button>
                   </PopoverClose>
                 </PopoverContent>
@@ -135,6 +186,70 @@ console.log(job.value);
           </TableRow>
         </TableBody>
       </Table>
+
+      <Card v-if="chat" class="w-[28rem]">
+        <CardHeader>
+          <CardTitle>Чат</CardTitle>
+          <CardDescription>Между заказчиком и фрилансером</CardDescription>
+        </CardHeader>
+
+        <CardContent class="space-y-4">
+          <Card
+            v-for="msg in chat.messages"
+            :key="msg.id"
+            class="gap-0 py-4 text-xs max-w-[75%]"
+            :class="{ 'ml-auto': msg.senderId === userId }"
+          >
+            <CardHeader class="px-4">
+              <CardTitle>
+                {{ msg.sender.name }}
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent class="px-4 text-gray-500">
+              {{ msg.content }}
+            </CardContent>
+
+            <CardFooter>
+              <div class="text-end w-full text-xs text-gray-600">
+                {{
+                  new Intl.DateTimeFormat("ru-RU", {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  }).format(new Date(msg.createdAt))
+                }}
+              </div>
+            </CardFooter>
+          </Card>
+        </CardContent>
+
+        <CardFooter class="flex-col gap-4">
+          <ul v-if="files" class="text-xs items-start">
+            <li v-for="file in files" :key="file.name">
+              {{ file.name }}
+            </li>
+          </ul>
+          <form
+            class="flex items-center gap-1.5 w-full"
+            @submit.prevent="handleSendMessage"
+          >
+            <Input v-model="message" type="text" placeholder="Message..." />
+
+            <Button variant="outline">
+              <label for="file">
+                <Paperclip />
+              </label>
+            </Button>
+            <Input
+              id="file"
+              class="hidden"
+              type="file"
+              @change="previewFiles"
+            />
+            <Button type="submit" :disabled="isSending">Send</Button>
+          </form>
+        </CardFooter>
+      </Card>
     </app-container>
   </app-main>
 </template>
