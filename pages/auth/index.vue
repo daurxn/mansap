@@ -43,11 +43,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
         </TabsList>
 
         <TabsContent value="signup">
-          <AuthSignupForm />
+          <SignupForm />
         </TabsContent>
 
         <TabsContent value="login">
-          <AuthLoginForm />
+          <LoginForm />
         </TabsContent>
       </Tabs>
     </div>
