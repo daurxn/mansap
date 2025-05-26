@@ -31,19 +31,13 @@ jobs:
       - name: Build the application
         run: npm run build
         
-      - name: Start the application in background
-        run: |
-          npm run dev &
-          # Give the app some time to start up
-          sleep 30
+
         
       - name: Run Playwright tests
         run: |
           cd playwright-ui-tests
           npx playwright test
-        env:
-          # Set base URL to match the running application
-          PLAYWRIGHT_TEST_BASE_URL: http://localhost:3000
+
           
       - uses: actions/upload-artifact@v4
         if: always()
