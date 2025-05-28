@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SignupForm from "~/components/auth/SignupForm.vue";
+import LoginForm from "~/components/auth/LoginForm.vue";
 </script>
 
 <template>
