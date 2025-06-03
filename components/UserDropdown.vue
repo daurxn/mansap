@@ -2,39 +2,24 @@
 import { Button } from "@/components/ui/button";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+DropdownMenu,
+DropdownMenuContent,
+DropdownMenuGroup,
+DropdownMenuItem,
+DropdownMenuLabel,
+DropdownMenuSeparator,
+DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
+LogOut,
+User
 } from "lucide-vue-next";
 import { useAuthStore } from "~/store/auth.store";
+import { useI18n } from "vue-i18n";
 
 const { logUserOut } = useAuthStore();
 const router = useRouter();
+const { t } = useI18n();
 
 function navigateToProfile() {
   router.push("/profile");
@@ -53,18 +38,18 @@ const { main = false } = defineProps<{
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56">
-      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuLabel>{{ t("common.my_account", "My Account") }}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuItem @click="navigateToProfile">
           <User class="mr-2 h-4 w-4" />
-          <span>Profile</span>
+          <span>{{ t("common.profile", "Profile") }}</span>
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="logUserOut">
         <LogOut class="mr-2 h-4 w-4" />
-        <span>{{ $t("logout") }}</span>
+        <span>{{ t("common.logout") }}</span>
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>

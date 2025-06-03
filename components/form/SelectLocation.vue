@@ -21,7 +21,7 @@ const locations = await useLocations();
             <div class="relative w-full max-w-sm items-center">
               <ComboboxInput
                 :display-value="(val) => val ?? ''"
-                :placeholder="`${$t('select')} ${$t('region')}`"
+                :placeholder="`${$t('common.select')} ${$t('common.region')}`"
               />
 
               <ComboboxTrigger

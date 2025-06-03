@@ -4,6 +4,7 @@ import LocaleSelect from "../home/LocaleSelect.vue";
 
 const { isAuthenticated, name } = storeToRefs(useAuthStore());
 const route = useRoute();
+const cookies = useCookie("token");
 
 const isIndexPage = computed(() => route.name === "index");
 
@@ -31,7 +32,7 @@ const linkClass = computed(() => (isIndexPage.value ? "text-white" : ""));
             class="flex gap-0.5 sm:gap-2 md:gap-6 items-center"
           >
             <NuxtLink to="/find-work" :class="linkClass">
-              {{ $t("find_work") }}
+              {{ $t("common.find_work") }}
             </NuxtLink>
             <NuxtLink to="/job-postings" :class="linkClass">
               {{ $t("jobs.my_vacancies") }}
@@ -46,11 +47,7 @@ const linkClass = computed(() => (isIndexPage.value ? "text-white" : ""));
           class="flex gap-5 items-center"
           :class="{ 'text-white': isIndexPage }"
         >
-          <NuxtLink
-            v-if="!isAuthenticated"
-            to="/auth"
-            @click="useCookie('token').value = null"
-          >
+          <NuxtLink v-if="!isAuthenticated" to="/auth" @click="cookies = null">
             {{ $t("login_sign-up") }}
           </NuxtLink>
           <UserDropdown :main="route.name === 'index'" v-else>

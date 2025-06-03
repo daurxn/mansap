@@ -168,7 +168,31 @@ const onSubmit = form.handleSubmit(async (values) => {
             </FormLabel>
 
             <FormControl>
-              <Input type="text" v-bind="componentField" />
+              <Textarea rows="4" v-bind="componentField" />
+            </FormControl>
+          </FormItem>
+        </FormField>
+        
+        <FormField v-slot="{ componentField }" name="requirements">
+          <FormItem class="mb-4">
+            <FormLabel>
+              {{ $t("jobs.requirements") || "Requirements" }}
+            </FormLabel>
+
+            <FormControl>
+              <Textarea rows="3" v-bind="componentField" placeholder="List job requirements here..." />
+            </FormControl>
+          </FormItem>
+        </FormField>
+        
+        <FormField v-slot="{ componentField }" name="responsibilities">
+          <FormItem class="mb-4">
+            <FormLabel>
+              {{ $t("jobs.responsibilities") || "Responsibilities" }}
+            </FormLabel>
+
+            <FormControl>
+              <Textarea rows="3" v-bind="componentField" placeholder="List job responsibilities here..." />
             </FormControl>
           </FormItem>
         </FormField>
@@ -293,6 +317,41 @@ const onSubmit = form.handleSubmit(async (values) => {
           class="mb-4 w-full"
           @select="(locationId) => form.setFieldValue('locationId', locationId)"
         />
+        
+        <FormField v-slot="{ componentField }" name="applicationDeadline">
+          <FormItem class="mb-4">
+            <FormLabel>
+              {{ $t("jobs.application_deadline") || "Application Deadline" }}
+            </FormLabel>
+
+            <FormControl>
+              <Input type="date" v-bind="componentField" />
+            </FormControl>
+          </FormItem>
+        </FormField>
+        
+        <FormField v-slot="{ componentField }" name="isRemote">
+          <FormItem class="mb-4 flex items-center gap-2">
+            <FormControl>
+              <Checkbox v-bind="componentField" />
+            </FormControl>
+            <FormLabel>
+              {{ $t("jobs.remote_work") || "Remote Work Option" }}
+            </FormLabel>
+          </FormItem>
+        </FormField>
+        
+        <FormField v-slot="{ componentField }" name="companyInfo">
+          <FormItem class="mb-4">
+            <FormLabel>
+              {{ $t("jobs.company_info") || "Company Information" }}
+            </FormLabel>
+
+            <FormControl>
+              <Textarea rows="3" v-bind="componentField" placeholder="Add information about the company..." />
+            </FormControl>
+          </FormItem>
+        </FormField>
 
         <FormField v-slot="{ componentField }" name="tags">
           <FormItem>

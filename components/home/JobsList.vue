@@ -23,7 +23,7 @@ const { jobs } = defineProps<{
             <span>&#x2022;</span>
 
             <Badge variant="secondary">
-              {{ job._count.applications + " " + $t("applications") }}
+              {{ job._count.applications + " " + $t("common.applications") }}
             </Badge>
           </div>
 

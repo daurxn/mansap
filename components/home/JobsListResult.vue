@@ -5,5 +5,5 @@ const { count } = defineProps<{
 </script>
 
 <template>
-  <span class="font-medium">{{ $t("results") }} ({{ count }})</span>
+  <span class="font-medium">{{ $t("common.results") }} ({{ count }})</span>
 </template>

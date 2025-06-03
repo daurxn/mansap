@@ -144,7 +144,7 @@ onMounted(async () => {
               Close
             </Button>
           </DialogClose>
-          <Button type="submit">{{ $t("save_changes") }}</Button>
+          <Button type="submit">{{ $t("common.save_changes") }}</Button>
         </DialogFooter>
       </form>
     </DialogContent>
