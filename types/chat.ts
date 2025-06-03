@@ -31,6 +31,7 @@ export type Chat = {
 export type ChatMessage = {
   id: number;
   content: string;
+  imageUrl?: string;
   status: string;
   createdAt: string;
   updatedAt: string;

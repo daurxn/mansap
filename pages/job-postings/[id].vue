@@ -30,12 +30,19 @@ const { data: chat, refresh } = await useAsyncData<Chat | null>(
       job.value.postedById &&
       [job.value.filledById, job.value.postedById].includes(userId.value)
     ) {
-      return $fetch(`/api/chat/jobs/${id}`, {
+      const result = await $fetch(`/api/chat/jobs/${id}`, {
         headers: headers.value,
       });
+      console.log('Raw chat data from API:', result);
+      return result;
     } else {
       return null;
     }
+  },
+  {
+    // Disable caching to ensure fresh data
+    server: false,
+    immediate: true
   }
 );
 

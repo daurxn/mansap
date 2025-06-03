@@ -48,7 +48,7 @@ const linkClass = computed(() => (isIndexPage.value ? "text-white" : ""));
           :class="{ 'text-white': isIndexPage }"
         >
           <NuxtLink v-if="!isAuthenticated" to="/auth" @click="cookies = null">
-            {{ $t("login_sign-up") }}
+            {{ $t("login_signup") }}
           </NuxtLink>
           <UserDropdown :main="route.name === 'index'" v-else>
             {{ name }}
