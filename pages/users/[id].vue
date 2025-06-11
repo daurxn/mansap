@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import EditProfileDialog from "~/components/EditProfileDialog.vue";
-import Separator from "~/components/ui/separator/Separator.vue";
-import ProjectsList from "~/components/profile/ProjectsList.vue";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import Separator from "~/components/ui/separator/Separator.vue";
 
 interface UserProfile {
   id: number;
@@ -50,9 +48,6 @@ interface Resume {
 const route = useRoute();
 const userId = computed(() => parseInt(route.params.id as string));
 const { t } = useI18n();
-const profile = ref<UserProfile | null>(null);
-const resumeData = ref<{ data?: Resume; message: string } | null>(null);
-const projectsData = ref<{ data?: Project[]; message: string } | null>(null);
 const isLoading = ref<boolean>(true);
 const error = ref<string | null>(null);
 const activeTab = ref("profile");
@@ -86,46 +81,40 @@ function closeProjectVideoModal() {
   }, 300);
 }
 
-// Fetch profile data when component is mounted
-onMounted(async () => {
-  try {
-    // Fetch user profile data
-    const { data: profileData } = await useFetch(
-      `/api/users/${userId.value}/profile`
-    );
-    profile.value = profileData.value as UserProfile;
+// Data fetching at setup time
+const { data: profileData, error: profileError } = await useFetch<UserProfile>(
+  () => `/api/users/${userId.value}/profile`
+);
 
-    // Try to fetch resume data if available
-    try {
-      const { data: resume } = await useFetch(
-        `/api/users/${userId.value}/resume`
-      );
-      resumeData.value = resume.value as { data?: Resume; message: string };
-    } catch (err) {
-      console.error("Failed to load resume data:", err);
-    }
-
-    // Try to fetch projects data if available
-    try {
-      const { data: projects } = await useFetch(
-        `/api/users/${userId.value}/projects`
-      );
-      projectsData.value = projects.value as {
-        data?: Project[];
-        message: string;
-      };
-    } catch (err) {
-      console.error("Failed to load projects data:", err);
-    }
-  } catch (err) {
-    error.value = t("errors.failedToLoadProfile");
-    console.error("Failed to load profile:", err);
-  } finally {
-    isLoading.value = false;
+// Fetch resume data
+const { data: resumeData } = await useFetch<{ data?: Resume; message: string }>(
+  () => `/api/users/${userId.value}/resume`,
+  {
+    // Continue if there's an error and just show empty resume section
+    ignoreResponseError: true,
   }
+);
+
+// Fetch projects data
+const { data: projectsData } = await useFetch<{
+  data?: Project[];
+  message: string;
+}>(() => `/api/users/${userId.value}/projects`, {
+  // Continue if there's an error and just show empty projects section
+  ignoreResponseError: true,
 });
 
+// Set error from fetch if any
+if (profileError.value) {
+  error.value = t("errors.failedToLoadProfile");
+  console.error("Failed to load profile:", profileError.value);
+}
+
+// Mark as not loading
+isLoading.value = false;
+
 // Helper computed properties
+const profile = computed(() => profileData.value);
 const userName = computed(() => profile.value?.name || "User Profile");
 const userBio = computed(() => profile.value?.bio || "No bio available");
 const hasLocation = computed(() => !!profile.value?.location);
@@ -139,6 +128,8 @@ const hasResume = computed(() => !!resumeData.value?.data);
 const hasProjects = computed(
   () => !!projectsData.value?.data && projectsData.value.data.length > 0
 );
+const hasProfileVideo = computed(() => !!profile.value?.videoUrl);
+
 </script>
 
 <template>
@@ -168,7 +159,7 @@ const hasProjects = computed(
                 class="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden bg-muted flex items-center justify-center"
               >
                 <NuxtImg
-                  :src="profile.imageUrl || '/3135715.png'"
+                  :src="profile.value?.imageUrl || '/3135715.png'"
                   class="object-cover w-full h-full"
                   alt="Profile picture"
                 />
@@ -208,7 +199,7 @@ const hasProjects = computed(
                 </Badge>
 
                 <Button
-                  v-if="profile.videoUrl"
+                  v-if="hasProfileVideo"
                   size="sm"
                   variant="outline"
                   class="gap-1 text-xs"
@@ -260,7 +251,10 @@ const hasProjects = computed(
 
                 <CardContent>
                   <div class="grid gap-6">
-                    <template v-for="(value, key, idx) in profile" :key="key">
+                    <template
+                      v-for="(value, key, idx) in profile.value"
+                      :key="key"
+                    >
                       <div
                         v-if="
                           value &&
@@ -349,7 +343,7 @@ const hasProjects = computed(
                       </h3>
                       <div class="bg-muted/50 rounded-lg p-4">
                         <p class="whitespace-pre-line">
-                          {{ resumeData?.data?.workExperience }}
+                          {{ resumeData.value?.data?.workExperience }}
                         </p>
                       </div>
                     </div>
@@ -362,7 +356,7 @@ const hasProjects = computed(
                       </h3>
                       <div class="bg-muted/50 rounded-lg p-4">
                         <p class="whitespace-pre-line">
-                          {{ resumeData?.data?.education }}
+                          {{ resumeData.value?.data?.education }}
                         </p>
                       </div>
                     </div>
@@ -415,7 +409,7 @@ const hasProjects = computed(
                     class="grid grid-cols-1 md:grid-cols-2 gap-6"
                   >
                     <div
-                      v-for="project in projectsData?.data"
+                      v-for="project in projectsData.value?.data"
                       :key="project.id"
                       class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                     >
@@ -569,10 +563,10 @@ const hasProjects = computed(
           class="relative aspect-video w-full overflow-hidden rounded-lg bg-muted"
         >
           <video
-            v-if="profile?.videoUrl"
+            v-if="hasProfileVideo"
             controls
             class="h-full w-full"
-            :src="profile.videoUrl"
+            :src="profile.value?.videoUrl"
           >
             {{
               $t("profile.video_not_supported") ||
