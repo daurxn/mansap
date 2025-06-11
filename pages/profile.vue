@@ -4,6 +4,15 @@ import Separator from "~/components/ui/separator/Separator.vue";
 import ProjectsList from "~/components/profile/ProjectsList.vue";
 import { useToken } from "~/composables/auth/useToken";
 import type { Resume } from "~/types/resume";
+import { toast } from "vue-sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 interface ProfileData {
   name?: string;
@@ -11,6 +20,8 @@ interface ProfileData {
   age?: number;
   gender?: string;
   locationId?: string | number;
+  imageUrl?: string;
+  location?: string;
   [key: string]: unknown;
 }
 
@@ -22,6 +33,11 @@ const { data: profileData } = useFetch<ProfileData>("/api/profile", {
   headers,
   key: "profile",
 });
+
+// Type assertion to help TypeScript understand the structure
+const typedProfileData = computed<ProfileData | null>(
+  () => profileData.value as ProfileData
+);
 
 console.log(profileData.value);
 
@@ -52,6 +68,73 @@ const userAge = computed(() => profileData.value?.age);
 
 // Active tab state
 const activeTab = ref("profile");
+
+// Profile image upload functionality
+const fileInputRef = ref<HTMLInputElement | null>(null);
+const { t } = useI18n();
+
+function openImageUpload() {
+  fileInputRef.value?.click();
+}
+
+
+
+async function handleImageUpload(event: Event) {
+  const fileInput = event.target as HTMLInputElement;
+  if (!fileInput.files || fileInput.files.length === 0) return;
+
+  const file = fileInput.files[0];
+
+  // Validate that the file is an image
+  if (!file.type.startsWith("image/")) {
+    toast.error(t("profile.invalid_image"));
+    return;
+  }
+
+  try {
+    // Create a FormData instance to send the file
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Create a temporary URL for preview while uploading
+    const tempPreviewUrl = URL.createObjectURL(file);
+    
+    // Send the file to the server
+    interface UploadResponse {
+      imageUrl: string;
+      message?: string;
+    }
+    
+    const response = await $fetch<UploadResponse>("/api/profile/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${useToken().value}`,
+      },
+      body: formData,
+    });
+
+    // Now update the profile with the permanent URL returned from the server
+    if (response && response.imageUrl) {
+      await $fetch("/api/profile", {
+        method: "PATCH",
+        headers,
+        body: { imageUrl: response.imageUrl },
+      });
+
+      // Force a refresh of the profile data
+      await refreshNuxtData("profile");
+      
+      // Release the blob URL to free memory
+      URL.revokeObjectURL(tempPreviewUrl);
+
+      toast.success(t("profile.image_updated"));
+    }
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    toast.error(t("profile.upload_error"));
+  }
+}
+
 </script>
 
 <template>
@@ -65,10 +148,14 @@ const activeTab = ref("profile");
           <div
             class="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden bg-muted flex items-center justify-center"
           >
-            <NuxtImg src="/3135715.png" class="object-cover w-full h-full" />
+            <NuxtImg
+              :src="typedProfileData?.imageUrl || '/3135715.png'"
+              class="object-cover w-full h-full"
+            />
           </div>
           <div
             class="absolute -bottom-2 -right-2 bg-primary rounded-full p-1.5 cursor-pointer hover:bg-primary/90 transition-colors"
+            @click="openImageUpload"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -80,11 +167,29 @@ const activeTab = ref("profile");
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              class="lucide lucide-pencil"
             >
               <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
               <path d="m15 5 4 4" />
             </svg>
           </div>
+          <div class="flex justify-center gap-2 mt-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              @click="openImageUpload"
+            >
+              {{ $t("profile.change_photo") }}
+            </Button>
+
+          </div>
+          <input
+            ref="fileInputRef"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            @change="handleImageUpload"
+          />
         </div>
 
         <div class="flex-1">
@@ -112,12 +217,14 @@ const activeTab = ref("profile");
             </Badge>
 
             <Badge v-if="hasGender" variant="outline" class="text-xs">
-              {{ $t("profile." + userGender?.toLowerCase()) }}
+              {{ userGender }}
             </Badge>
 
             <Badge v-if="hasAge" variant="outline" class="text-xs">
               {{ userAge }} {{ $t("profile.years") }}
             </Badge>
+            
+
           </div>
         </div>
 
@@ -329,4 +436,5 @@ const activeTab = ref("profile");
       </Tabs>
     </app-container>
   </app-main>
+
 </template>

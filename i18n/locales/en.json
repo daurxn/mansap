@@ -47,7 +47,26 @@
     "register": "Register",
     "login": "Login",
     "signin_title": "Login",
-    "name": "Name"
+    "name": "Name",
+    "errors": {
+      "name_required": "Name is required.",
+      "name_min": "Name must be at least 2 characters.",
+      "name_max": "Name cannot be longer than 50 characters.",
+      "email_required": "Email is required.",
+      "email_invalid": "Invalid email address.",
+      "password_required": "Password is required.",
+      "password_min": "Password must be at least 8 characters.",
+      "password_max": "Password cannot be longer than 128 characters.",
+      "failedToLoadProfiles": "Failed to load profiles"
+    },
+    "landing": {
+      "hero_title_part1": "Tap into the",
+      "hero_title_part2": "global talent network",
+      "post_job_title": "Post your job",
+      "post_job_description": "It's free and simple! Receive a multitude of competitive offers that fit your budget in minutes. Start bringing your dreams to life.",
+      "choose_freelancers_title": "Choose freelancers",
+      "choose_freelancers_description": "No task is too big or too complex. We have freelancers for tasks of any size and budget, with over 2700 skills. Let our talent bring your ideas to life."
+    }
   },
   "jobs": {
     "my_vacancies": "My vacancies",
@@ -74,7 +93,14 @@
     "send": "Send",
     "posted_by": "Posted by"
   },
+  "freelancers": {
+    "title": "Featured Freelancers",
+    "viewProfile": "View Profile"
+  },
   "profile": {
+    "invalid_image": "Invalid image format",
+    "image_updated": "Profile image updated successfully",
+    "upload_error": "Error uploading image",
     "name": "Name",
     "age": "Age",
     "gender": "Gender",

@@ -7,7 +7,7 @@ import { useI18n } from "vue-i18n"; // Assuming vue-i18n is used
 
 export function useRegister() {
   const { t } = useI18n();
-  const { registerUser, loading: registering } = useAuthStore();
+  const { registerUser, isLoading: registering } = useAuthStore();
 
   const RoleEnum = z.enum(["USER", "ADMIN", "MODERATOR"]);
 

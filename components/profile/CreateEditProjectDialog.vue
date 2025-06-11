@@ -73,6 +73,47 @@
               <img :src="form.imageUrl" alt="Project preview" class="h-24 w-auto rounded-md object-cover">
             </div>
           </div>
+          
+          <!-- Project Video Field -->
+          <div class="space-y-2">
+            <Label for="videoUrl">{{ $t("profile.project_video") || 'Project Video' }}</Label>
+            <div class="flex items-center gap-2">
+              <Input 
+                id="videoUrl" 
+                v-model="form.videoUrl" 
+                :placeholder="$t('profile.project_video_placeholder') || 'Add a video showcasing your project'" 
+                class="flex-1"
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                @click="openVideoUpload"
+              >
+                {{ $t("profile.upload") || 'Upload' }}
+              </Button>
+              <input 
+                ref="videoInput"
+                type="file" 
+                accept="video/mp4,video/webm,video/ogg" 
+                class="hidden" 
+                @change="handleVideoUpload"
+              >
+            </div>
+            <div v-if="form.videoUrl" class="mt-2 flex items-center gap-2">
+              <div class="text-sm text-muted-foreground">
+                <span class="font-medium">{{ $t("profile.video_uploaded") || 'Video uploaded' }}</span>
+              </div>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm"
+                @click="previewVideo"
+              >
+                {{ $t("profile.preview") || 'Preview' }}
+              </Button>
+            </div>
+          </div>
         </div>
         
         <DialogFooter>
@@ -84,13 +125,48 @@
       </form>
     </DialogContent>
   </Dialog>
+  
+  <!-- Video Preview Modal -->
+  <Dialog :open="isVideoModalOpen" @update:open="isVideoModalOpen = false">
+    <DialogContent class="max-w-3xl">
+      <DialogHeader>
+        <DialogTitle>{{ $t("profile.project_video_preview") || 'Video Preview' }}</DialogTitle>
+      </DialogHeader>
+      
+      <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+        <video 
+          v-if="form.videoUrl" 
+          controls 
+          class="h-full w-full" 
+          :src="form.videoUrl"
+        >
+          {{ $t("profile.video_not_supported") || 'Your browser does not support the video tag.' }}
+        </video>
+      </div>
+      
+      <DialogFooter>
+        <Button @click="isVideoModalOpen = false">{{ $t("common.close") || 'Close' }}</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { toast } from 'vue-sonner';
 import { useToken } from '~/composables/auth/useToken';
-import type { Project } from '~/types/project';
+
+// Define Project type if not imported
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  projectUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // UI Components
 import Dialog from '~/components/ui/dialog/Dialog.vue';
@@ -115,7 +191,11 @@ const isOpen = ref(false);
 
 const isEditing = computed(() => !!props.project);
 const fileInput = ref<HTMLInputElement | null>(null);
+const videoInput = ref<HTMLInputElement | null>(null);
 const isSubmitting = ref(false);
+
+// Video preview modal state
+const isVideoModalOpen = ref(false);
 
 // Form state
 const form = reactive({
@@ -123,6 +203,7 @@ const form = reactive({
   description: props.project?.description || '',
   projectUrl: props.project?.projectUrl || '',
   imageUrl: props.project?.imageUrl || '',
+  videoUrl: props.project?.videoUrl || '',
 });
 
 // Form errors
@@ -155,6 +236,16 @@ const openFileUpload = () => {
   fileInput.value?.click();
 };
 
+// Open video upload dialog
+const openVideoUpload = () => {
+  videoInput.value?.click();
+};
+
+// Preview video
+const previewVideo = () => {
+  isVideoModalOpen.value = true;
+};
+
 // Handle file upload
 const handleFileUpload = async (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -179,6 +270,73 @@ const handleFileUpload = async (event: Event) => {
   } catch (error) {
     toast.error('Failed to upload image');
     console.error('Upload error:', error);
+  }
+};
+
+// Handle video upload
+const handleVideoUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (!target.files || target.files.length === 0) return;
+
+  const file = target.files[0];
+  
+  // Validate file type
+  const validTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+  if (!validTypes.includes(file.type)) {
+    toast.error('Invalid video format. Please use MP4, WebM, or OGG format.');
+    return;
+  }
+  
+  // Validate file size (max 100MB)
+  const maxSize = 100 * 1024 * 1024; // 100MB
+  if (file.size > maxSize) {
+    toast.error('Video file is too large. Maximum size is 100MB.');
+    return;
+  }
+  
+  // Show loading toast
+  const loadingToast = toast.loading('Uploading video...');
+  
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  try {
+    // If editing, upload to the project's endpoint
+    if (isEditing.value && props.project) {
+      const response = await $fetch<{ videoUrl: string }>(`/api/profile/projects/${props.project.id}/upload-video`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${useToken().value}`,
+        },
+      });
+      
+      if (response && response.videoUrl) {
+        form.videoUrl = response.videoUrl;
+        toast.success('Video uploaded successfully');
+      }
+    } else {
+      // For new projects, we'll need to store the file temporarily and use it when creating the project
+      // This depends on your backend implementation
+      // For now, we can use a generic upload endpoint and update the form
+      const response = await $fetch<{ videoUrl: string }>('/api/upload/video', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${useToken().value}`,
+        },
+      });
+      
+      if (response && response.videoUrl) {
+        form.videoUrl = response.videoUrl;
+        toast.success('Video uploaded successfully');
+      }
+    }
+  } catch (error) {
+    toast.error('Failed to upload video');
+    console.error('Video upload error:', error);
+  } finally {
+    toast.dismiss(loadingToast);
   }
 };
 

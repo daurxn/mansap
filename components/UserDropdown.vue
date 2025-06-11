@@ -16,10 +16,34 @@ User
 } from "lucide-vue-next";
 import { useAuthStore } from "~/store/auth.store";
 import { useI18n } from "vue-i18n";
+import { useToken } from "~/composables/auth/useToken";
 
 const { logUserOut } = useAuthStore();
 const router = useRouter();
 const { t } = useI18n();
+
+// Get user profile data for the image
+const headers = {
+  Authorization: `Bearer ${useToken().value}`,
+};
+
+interface ProfileData {
+  name?: string;
+  bio?: string;
+  age?: number;
+  gender?: string;
+  imageUrl?: string;
+  location?: string;
+  [key: string]: unknown;
+}
+
+const { data: profileData } = useFetch<ProfileData>("/api/profile", {
+  headers,
+  key: "profile",
+});
+
+// Type assertion to help TypeScript understand the structure
+const typedProfileData = computed<ProfileData | null>(() => profileData.value as ProfileData);
 
 function navigateToProfile() {
   router.push("/profile");
@@ -33,8 +57,15 @@ const { main = false } = defineProps<{
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="link" :class="{ 'text-white': main }">
-        <slot />
+      <Button variant="link" :class="{ 'text-white': main }" class="flex items-center gap-2">
+        <div v-if="typedProfileData?.imageUrl" class="h-8 w-8 rounded-full overflow-hidden">
+          <NuxtImg 
+            :src="typedProfileData.imageUrl" 
+            class="object-cover w-full h-full" 
+            alt="Profile image"
+          />
+        </div>
+        <slot />  
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56">

@@ -10,25 +10,27 @@ import LoginForm from "~/components/auth/LoginForm.vue";
   >
     <div>
       <h1 class="font-semibold leading-11 text-4xl mb-10">
-        Нажмите на<br />глобальная сеть талантов
+        {{ $t('auth.landing.hero_title_part1') }}
+        <br />
+        {{ $t('auth.landing.hero_title_part2') }}
       </h1>
 
       <div class="flex justify-between gap-10">
         <div>
-          <h5 class="text-2xl font-semibold mb-2">Расместите свою работу</h5>
+          <h5 class="text-2xl font-semibold mb-2">
+            {{ $t("auth.landing.post_job_title") }}
+          </h5>
           <p>
-            Это бесплатно и просто! Получите множество конкурентоспособных
-            предложений, которые соответствуют вашему бюджету, за считанные
-            минуты. Начните воплощать свои мечты в реальность.
+            {{ $t("auth.landing.post_job_description") }}
           </p>
         </div>
 
         <div>
-          <h5 class="text-2xl font-semibold mb-2">Выбрать фрилансеров</h5>
+          <h5 class="text-2xl font-semibold mb-2">
+            {{ $t("auth.landing.choose_freelancers_title") }}
+          </h5>
           <p>
-            Нет слишком больших или сложных задач. У нас есть фрилансеры для
-            задач любого размера и бюджета, более 2700 навыков. Позвольте нашему
-            таланту воплотить ваши идеи в жизнь.
+            {{ $t("auth.landing.choose_freelancers_description") }}
           </p>
         </div>
       </div>
