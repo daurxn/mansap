@@ -13,8 +13,8 @@
       </CreateEditProjectDialog>
     </div>
 
-    <div v-if="isLoading" class="flex justify-center py-6 sm:py-8">
-      <Loader class="h-6 w-6 sm:h-8 sm:w-8 animate-spin" />
+    <div v-if="isLoading" class="flex justify-center items-center h-48">
+      <p>Loading...</p>
     </div>
 
     <div v-else-if="!projects.length" class="py-6 sm:py-8 text-center">
@@ -39,13 +39,7 @@
         class="overflow-hidden flex flex-col project-card"
       >
         <div class="relative h-32 sm:h-36 md:h-40 w-full">
-          <img
-            v-if="project.imageUrl"
-            :src="project.imageUrl"
-            :alt="project.title"
-            class="h-full w-full object-cover"
-            loading="lazy"
-          />
+          <img v-if="project.imageUrl" :src="project.imageUrl" :alt="project.title" class="h-48 w-full rounded-t-lg object-cover" loading="lazy" />
           <div
             v-else
             class="h-full w-full bg-muted flex items-center justify-center"
@@ -140,7 +134,7 @@ import Card from "~/components/ui/card/Card.vue";
 import CardContent from "~/components/ui/card/CardContent.vue";
 import CardFooter from "~/components/ui/card/CardFooter.vue";
 import Button from "~/components/ui/button/Button.vue";
-import Loader from "~/components/ui/loader/Loader.vue";
+
 import Dialog from "~/components/ui/dialog/Dialog.vue";
 import DialogContent from "~/components/ui/dialog/DialogContent.vue";
 import DialogDescription from "~/components/ui/dialog/DialogDescription.vue";

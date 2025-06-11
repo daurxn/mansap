@@ -118,7 +118,7 @@
         
         <DialogFooter>
           <Button type="submit" :disabled="isSubmitting">
-            <Loader v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
+
             {{ isSubmitting ? $t("common.saving") : (isEditing ? $t("common.update") : $t("common.create")) }}
           </Button>
         </DialogFooter>
@@ -156,18 +156,6 @@ import { ref, reactive, computed } from 'vue';
 import { toast } from 'vue-sonner';
 import { useToken } from '~/composables/auth/useToken';
 
-// Define Project type if not imported
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  projectUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 // UI Components
 import Dialog from '~/components/ui/dialog/Dialog.vue';
 import DialogContent from '~/components/ui/dialog/DialogContent.vue';
@@ -180,7 +168,19 @@ import Button from '~/components/ui/button/Button.vue';
 import Input from '~/components/ui/input/Input.vue';
 import Label from '~/components/ui/label/Label.vue';
 import Textarea from '~/components/ui/textarea/Textarea.vue';
-import Loader from '~/components/ui/loader/Loader.vue';
+
+// Define Project type if not imported
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  projectUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 const props = defineProps<{
   project?: Project;
