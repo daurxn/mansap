@@ -32,7 +32,7 @@
   },
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "OXC_USE_JS=1 nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
