@@ -36,8 +36,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "test": "vitest",
-    "prepare": "if [ \"$VERCEL\" = \"1\" ]; then sed -i 's/\"optionalDependencies\":.*/\"optionalDependencies\": {}/' node_modules/rollup/package.json; fi"
+    "test": "vitest"
   },
   "type": "module",
   "devDependencies": {
