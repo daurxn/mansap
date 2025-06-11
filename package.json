@@ -38,7 +38,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "test": "vitest"
+    "test": "vitest",
+    "postinstall": "nuxt prepare"
   },
   "type": "module",
   "devDependencies": {
