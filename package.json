@@ -32,7 +32,7 @@
   },
   "private": true,
   "scripts": {
-    "build": "cross-env OXC_USE_JS=1 nuxt build",
+    "build": "cross-env NODE_OPTIONS='-r ./set-oxc-env.js' nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
