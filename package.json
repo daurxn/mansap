@@ -37,7 +37,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "test": "vitest"
+    "test": "vitest",
+    "vercel-build": "npm ci --omit=optional && npm run build"
   },
   "type": "module",
   "devDependencies": {
